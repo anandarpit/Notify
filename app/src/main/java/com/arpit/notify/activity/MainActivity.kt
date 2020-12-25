@@ -1,9 +1,9 @@
-package com.arpit.notify
+package com.arpit.notify.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import com.arpit.notify.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -11,9 +11,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        add_note.setOnClickListener(View.OnClickListener {
-            val intent = Intent(this,CreateNotesActivity::class.java)
+        add_note.setOnClickListener{
+            val intent = Intent(this, CreateNotesActivity::class.java)
             startActivity(intent)
-        })
+        }
     }
 }

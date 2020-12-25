@@ -1,7 +1,8 @@
-package com.arpit.notify
+package com.arpit.notify.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.arpit.notify.R
 
 class CreateNotesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
