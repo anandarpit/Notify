@@ -1,6 +1,8 @@
 package com.arpit.notify.activity
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +11,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.arpit.notify.R
@@ -25,6 +28,8 @@ import java.util.*
 
 class CreateNotesActivity : AppCompatActivity() {
 
+    lateinit var selectedNoteColor: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_notes)
@@ -37,19 +42,21 @@ class CreateNotesActivity : AppCompatActivity() {
 
         initMiscellaneou();
 
+        selectedNoteColor = "#333333"
+
+        setSubTitleIndicatorColor()
+
+    }
+
+    private fun setSubTitleIndicatorColor() {
+        var gradientDrawable:GradientDrawable  = view.background as GradientDrawable
+        gradientDrawable.setColor(Color.parseColor(selectedNoteColor))
     }
 
     private fun initMiscellaneou() {
 
         val llBottomSheet = findViewById<LinearLayout>(R.id.layout_misc)
         val bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet)
-
-//        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-//
-//        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-//            override fun onStateChanged(bottomSheet: View, newState: Int) {}
-//            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-//        })
 
         layout_misc.setOnClickListener{
             if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED){
@@ -58,6 +65,58 @@ class CreateNotesActivity : AppCompatActivity() {
                 else{
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
+        }
+
+        tick_one.setOnClickListener{
+            selectedNoteColor = "#333333"
+
+            tick_one.setImageResource(R.drawable.ic_single_done)
+            tick_two.setImageResource(0)
+            tick_three.setImageResource(0)
+            tick_four.setImageResource(0)
+            tick_five.setImageResource(0)
+            setSubTitleIndicatorColor()
+        }
+
+        tick_two.setOnClickListener{
+            selectedNoteColor = "#FDBE3B"
+
+            tick_one.setImageResource(0)
+            tick_two.setImageResource(R.drawable.ic_single_done)
+            tick_three.setImageResource(0)
+            tick_four.setImageResource(0)
+            tick_five.setImageResource(0)
+            setSubTitleIndicatorColor()
+        }
+        tick_three.setOnClickListener{
+            selectedNoteColor = "#FF4842"
+
+            tick_one.setImageResource(0)
+            tick_two.setImageResource(0)
+            tick_three.setImageResource(R.drawable.ic_single_done)
+            tick_four.setImageResource(0)
+            tick_five.setImageResource(0)
+            setSubTitleIndicatorColor()
+        }
+        tick_four.setOnClickListener{
+            selectedNoteColor = "#3A52Fc"
+
+            tick_one.setImageResource(0)
+            tick_two.setImageResource(0)
+            tick_three.setImageResource(0)
+            tick_four.setImageResource(R.drawable.ic_single_done)
+            tick_five.setImageResource(0)
+            setSubTitleIndicatorColor()
+        }
+        tick_five.setOnClickListener{
+            selectedNoteColor = "#4CAF50"
+
+            tick_one.setImageResource(0)
+            tick_two.setImageResource(0)
+            tick_three.setImageResource(0)
+            tick_four.setImageResource(0)
+            tick_five.setImageResource(R.drawable.ic_single_done)
+            setSubTitleIndicatorColor()
         }
     }
 
@@ -79,6 +138,7 @@ class CreateNotesActivity : AppCompatActivity() {
             note.setSubtitle(subtitle)
             note.setNoteText(notes)
             note.setDateTime(datetime.text.toString())
+            note.setColor(selectedNoteColor)
 
             class SaveNotes: AsyncTask<Void, Void, Void>() {
 
@@ -108,8 +168,5 @@ class CreateNotesActivity : AppCompatActivity() {
     fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
         Snackbar.make(this, message, duration).show()
     }
-
-
-
 
 }

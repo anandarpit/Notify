@@ -1,9 +1,12 @@
 package com.arpit.notify.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,6 +52,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
     public static class myAdapter extends RecyclerView.ViewHolder {
 
         TextView textTitle, textSubtitle, textDate;
+        LinearLayout layoutContaier;
 
         public myAdapter(@NonNull View itemView) {
             super(itemView);
@@ -56,6 +60,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             textTitle = itemView.findViewById(R.id.textTitle);
             textSubtitle = itemView.findViewById(R.id.textSubtitle);
             textDate = itemView.findViewById(R.id.textDate);
+            layoutContaier = itemView.findViewById(R.id.item_container_layout);
 
         }
 
@@ -69,6 +74,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             }
             else{
                 textSubtitle.setText(note.getSubtitle());
+            }
+
+            GradientDrawable gradientDrawable = (GradientDrawable) layoutContaier.getBackground();
+
+            if(note.getColor() != null){
+                gradientDrawable.setColor(Color.parseColor(note.getColor()));
+            }
+            else{
+                gradientDrawable.setColor(Color.parseColor("#333333"));
             }
 
         }

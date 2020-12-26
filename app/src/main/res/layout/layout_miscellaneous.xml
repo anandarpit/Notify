@@ -43,6 +43,7 @@
                 android:background="@drawable/background_note_color_1"/>
 
             <ImageView
+                android:id="@+id/tick_one"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:padding="@dimen/_10sdp"
@@ -60,6 +61,7 @@
                 android:background="@drawable/background_note_color_2"/>
 
             <ImageView
+                android:id="@+id/tick_two"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:padding="@dimen/_10sdp"
@@ -75,6 +77,7 @@
                 android:background="@drawable/background_note_color_3"/>
 
             <ImageView
+                android:id="@+id/tick_three"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:padding="@dimen/_10sdp"
@@ -90,6 +93,7 @@
                 android:background="@drawable/background_note_color_4"/>
 
             <ImageView
+                android:id="@+id/tick_four"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:padding="@dimen/_10sdp"
@@ -105,6 +109,7 @@
                 android:background="@drawable/background_note_color_5"/>
 
             <ImageView
+                android:id="@+id/tick_five"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:padding="@dimen/_10sdp"

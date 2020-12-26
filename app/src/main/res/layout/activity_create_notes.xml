@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/CreateNoteLayout"
-    android:background="#333333"
+    android:background="#2B2A2A"
     tools:context=".activity.CreateNotesActivity">
     <ScrollView
         android:layout_width="match_parent"
@@ -55,6 +55,7 @@
                 android:fontFamily="@font/ubuntu_bold"
                 android:hint="Note Title"
                 android:imeOptions="actionDone"
+                android:textCursorDrawable="@drawable/text_cursor_color"
                 android:textColor="#ffffff"
                 android:textColorHint="#7b7b7b"
                 android:background="@null"
@@ -84,6 +85,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
+                android:textCursorDrawable="@drawable/text_cursor_color"
+
                 android:background="@null"
                 android:fontFamily="@font/ubuntu_medium"
                 android:hint="Note Subtitle"
@@ -117,6 +120,8 @@
                 android:layout_marginVertical="@dimen/_15sdp"
                 android:background="@null"
                 android:fontFamily="@font/ubuntu_regular"
+                android:textCursorDrawable="@drawable/text_cursor_color"
+
                 android:gravity="top"
                 android:hint="Type Note here..."
                 android:importantForAutofill="no"
