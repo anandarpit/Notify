@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import com.arpit.notify.R
 import com.arpit.notify.database.NotesDatabase
@@ -55,6 +56,7 @@ class CreateNotesActivity : AppCompatActivity() {
 
                 override fun onPostExecute(result: Void?) {
                     super.onPostExecute(result)
+                    Log.d("Arptii", result.toString())
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         val intent = Intent()

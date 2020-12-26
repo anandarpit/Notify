@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        getNote()
+        getNote()
         add_note.setOnClickListener{
             val intent = Intent(this, CreateNotesActivity::class.java)
             startActivity(intent)
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onPostExecute(result: List<Note>?) {
                 super.onPostExecute(result)
-                Log.d("MainActvity", result.toString())
+                Log.d("Arpti", result.toString())
             }
         }
 
