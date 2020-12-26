@@ -8,15 +8,19 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.arpit.notify.R
+import com.arpit.notify.adapter.NoteAdapter
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_notes.*
+import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateNotesActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_notes)
@@ -26,6 +30,7 @@ class CreateNotesActivity : AppCompatActivity() {
         done.setOnClickListener{
             saveNote()
         }
+
     }
 
     private fun saveNote() {

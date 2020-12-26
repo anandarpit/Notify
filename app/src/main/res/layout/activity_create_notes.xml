@@ -122,7 +122,7 @@
                 android:importantForAutofill="no"
                 android:includeFontPadding="true"
                 android:inputType="textMultiLine"
-                android:minHeight="@dimen/_100sdp"
+                android:minHeight="@dimen/_150sdp"
                 android:textColor="#ffff"
                 android:textColorHint="#7B7B7B"
                 android:textSize="@dimen/_13ssp"
