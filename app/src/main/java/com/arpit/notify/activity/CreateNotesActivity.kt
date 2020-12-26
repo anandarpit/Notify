@@ -8,14 +8,18 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.arpit.notify.R
 import com.arpit.notify.adapter.NoteAdapter
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_notes.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.layout_miscellaneous.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,6 +35,30 @@ class CreateNotesActivity : AppCompatActivity() {
             saveNote()
         }
 
+        initMiscellaneou();
+
+    }
+
+    private fun initMiscellaneou() {
+
+        val llBottomSheet = findViewById<LinearLayout>(R.id.layout_misc)
+        val bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet)
+
+//        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+//
+//        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+//            override fun onStateChanged(bottomSheet: View, newState: Int) {}
+//            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+//        })
+
+        layout_misc.setOnClickListener{
+            if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED){
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+                else{
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        }
     }
 
     private fun saveNote() {
@@ -80,6 +108,8 @@ class CreateNotesActivity : AppCompatActivity() {
     fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
         Snackbar.make(this, message, duration).show()
     }
+
+
 
 
 }
