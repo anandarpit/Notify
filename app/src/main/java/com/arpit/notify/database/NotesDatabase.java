@@ -11,7 +11,7 @@ import com.arpit.notify.dao.NoteDao;
 import com.arpit.notify.entities.Note;
 
 @Database(entities = Note.class, version = 1, exportSchema = false)
-abstract class NotesDatabase extends RoomDatabase {
+public abstract class NotesDatabase extends RoomDatabase {
 
     private static NotesDatabase notesDatabase;
 
