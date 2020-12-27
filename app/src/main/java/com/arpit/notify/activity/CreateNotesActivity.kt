@@ -39,6 +39,7 @@ import java.util.*
 class CreateNotesActivity : AppCompatActivity() {
 
     private lateinit var selectedNoteColor: String
+    private lateinit var selectedImagePath: String
 
     private val REQUEST_GALLERY_CODE = 1
     private val REQUEST_CODE_SELECT_IMAGE = 2
@@ -56,6 +57,7 @@ class CreateNotesActivity : AppCompatActivity() {
         initMiscellaneou()
 
         selectedNoteColor = "#333333"
+        selectedImagePath= ""
 
         setSubTitleIndicatorColor()
 
@@ -208,6 +210,7 @@ class CreateNotesActivity : AppCompatActivity() {
             note.setNoteText(notes)
             note.setDateTime(datetime.text.toString())
             note.setColor(selectedNoteColor)
+            note.setImagePath(selectedImagePath)
 
             class SaveNotes: AsyncTask<Void, Void, Void>() {
 
@@ -250,6 +253,8 @@ class CreateNotesActivity : AppCompatActivity() {
                         val bitmap = BitmapFactory.decodeStream(inputStream)
                         image_on_create.setImageBitmap(bitmap)
                         image_on_create.visibility = View.VISIBLE
+
+                        selectedImagePath = getPathFromUri(selectImageUri)
                     }
                     catch (e:Exception){
                         Toast.makeText(applicationContext, e.message , Toast.LENGTH_LONG).show()
@@ -257,6 +262,21 @@ class CreateNotesActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun getPathFromUri(contentUri:Uri): String {
+        var filePath: String
+        var cursor = contentResolver.query(contentUri,null,null,null,null)
+        if(cursor == null){
+            filePath = contentUri.path.toString()
+        }
+        else{
+            cursor.moveToFirst()
+            var index = cursor.getColumnIndex("_data")
+            filePath= cursor.getString(index)
+            cursor.close()
+        }
+        return filePath
     }
 
 

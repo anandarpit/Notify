@@ -1,5 +1,6 @@
 package com.arpit.notify.adapter;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.arpit.notify.R;
 import com.arpit.notify.entities.Note;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
 
@@ -52,6 +54,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
 
         TextView textTitle, textSubtitle, textDate;
         LinearLayout layoutContaier;
+        RoundedImageView noteImage;
 
         public myAdapter(@NonNull View itemView) {
             super(itemView);
@@ -60,6 +63,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             textSubtitle = itemView.findViewById(R.id.textSubtitle);
             textDate = itemView.findViewById(R.id.textDate);
             layoutContaier = itemView.findViewById(R.id.item_container_layout);
+            noteImage = itemView.findViewById(R.id.note_image);
 
         }
 
@@ -84,6 +88,16 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             else{
                 gradientDrawable.setColor(Color.parseColor("#333333"));
             }
+
+            if(note.getImagePath() != null){
+                noteImage.setImageBitmap(BitmapFactory.decodeFile(note.getImagePath()));
+                noteImage.setVisibility(View.VISIBLE);
+            }
+            else{
+                noteImage.setVisibility(View.GONE);
+            }
+
+
         }
     }
 }
