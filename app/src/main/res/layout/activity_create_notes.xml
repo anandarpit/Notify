@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -86,7 +87,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:textCursorDrawable="@drawable/text_cursor_color"
-
                 android:background="@null"
                 android:fontFamily="@font/ubuntu_medium"
                 android:hint="Note Subtitle"
@@ -112,6 +112,16 @@
                 app:layout_constraintBottom_toBottomOf="@id/subtitle_edit_text"
                 app:layout_constraintStart_toStartOf="parent"/>
 
+
+            <ImageView
+                android:id="@+id/image_on_create"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/subtitle_edit_text" />
+
             <EditText
                 android:id="@+id/note_text"
                 android:layout_width="match_parent"
@@ -121,7 +131,6 @@
                 android:background="@null"
                 android:fontFamily="@font/ubuntu_regular"
                 android:textCursorDrawable="@drawable/text_cursor_color"
-
                 android:gravity="top"
                 android:hint="Type Note here..."
                 android:importantForAutofill="no"
@@ -134,7 +143,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/subtitle_edit_text" />
+                app:layout_constraintTop_toBottomOf="@id/image_on_create" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

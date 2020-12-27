@@ -125,4 +125,29 @@
             android:fontFamily="@font/ubuntu_light"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layout_add_image"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_baseline_photo"
+            app:tint="#fff" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textSize="@dimen/_13ssp"
+            android:text="Add Image"
+            android:fontFamily="@font/ubuntu_light"
+            android:textColor="#fff"
+            android:gravity="center"/>
+    </LinearLayout>
+
 </LinearLayout>

@@ -1,6 +1,5 @@
 package com.arpit.notify.adapter;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -64,11 +63,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
 
         }
 
-        public void bind(Note note) {
+        public void bind(Note note)
+        {
 
             textTitle.setText(note.getTitle());
-
             textDate.setText(note.getDateTime());
+
             if(note.getSubtitle().isEmpty()){
                 textSubtitle.setVisibility(View.GONE);
             }
@@ -84,7 +84,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             else{
                 gradientDrawable.setColor(Color.parseColor("#333333"));
             }
-
         }
     }
 }

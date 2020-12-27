@@ -1,46 +1,59 @@
 package com.arpit.notify.activity
 
+import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.fragment.app.Fragment
 import com.arpit.notify.R
-import com.arpit.notify.adapter.NoteAdapter
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_notes.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.*
+import java.lang.Exception
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.util.*
 
 class CreateNotesActivity : AppCompatActivity() {
 
-    lateinit var selectedNoteColor: String
+    private lateinit var selectedNoteColor: String
+
+    private val REQUEST_GALLERY_CODE = 1
+    private val REQUEST_CODE_SELECT_IMAGE = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_notes)
 
-        datetime.setText(SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date()))
+        datetime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
 
         done.setOnClickListener{
             saveNote()
         }
 
-        initMiscellaneou();
+        initMiscellaneou()
 
         selectedNoteColor = "#333333"
 
@@ -49,7 +62,7 @@ class CreateNotesActivity : AppCompatActivity() {
     }
 
     private fun setSubTitleIndicatorColor() {
-        var gradientDrawable:GradientDrawable  = view.background as GradientDrawable
+        val gradientDrawable:GradientDrawable  = view.background as GradientDrawable
         gradientDrawable.setColor(Color.parseColor(selectedNoteColor))
     }
 
@@ -118,6 +131,62 @@ class CreateNotesActivity : AppCompatActivity() {
             tick_five.setImageResource(R.drawable.ic_single_done)
             setSubTitleIndicatorColor()
         }
+
+        layout_add_image.setOnClickListener{
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            var permissio = ContextCompat.checkSelfPermission(applicationContext
+            , Manifest.permission.READ_EXTERNAL_STORAGE)
+
+            if(permissio != PackageManager.PERMISSION_GRANTED){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    val builder = AlertDialog.Builder(this)
+                    builder.setMessage("Permission to access the gallery is required for this app to add image notes")
+                                    .setTitle("Permission required")
+
+                                    builder.setPositiveButton("OK"
+                                    ) { dialog, id ->
+                                makeRequest()
+                            }
+
+                            val dialog = builder.create()
+                    dialog.show()
+                } else {
+                    makeRequest()
+                }
+            }
+            else{
+                addImage()
+            }
+
+
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == REQUEST_GALLERY_CODE  && grantResults.size > 0)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                addImage()
+            }else{
+                Toast.makeText(applicationContext, "Permission Denied!" , Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun addImage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        if(intent.resolveActivity(packageManager)!=null){
+            startActivityForResult(intent,REQUEST_CODE_SELECT_IMAGE)
+        }
+    }
+
+    private fun makeRequest() {
+        ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                REQUEST_GALLERY_CODE)
     }
 
     private fun saveNote() {
@@ -150,6 +219,7 @@ class CreateNotesActivity : AppCompatActivity() {
                 override fun onPostExecute(result: Void?) {
                     super.onPostExecute(result)
                     Log.d("Arptii", result.toString())
+                    hideKeyboard() // Hide the Keyboard
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         val intent = Intent()
@@ -167,6 +237,40 @@ class CreateNotesActivity : AppCompatActivity() {
 
     fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
         Snackbar.make(this, message, duration).show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == REQUEST_CODE_SELECT_IMAGE && resultCode == RESULT_OK){
+            if(data != null){
+                val selectImageUri: Uri? = data.data
+                if(selectImageUri!=null){
+                    try {
+                        val inputStream = contentResolver.openInputStream(selectImageUri)
+                        val bitmap = BitmapFactory.decodeStream(inputStream)
+                        image_on_create.setImageBitmap(bitmap)
+                        image_on_create.visibility = View.VISIBLE
+                    }
+                    catch (e:Exception){
+                        Toast.makeText(applicationContext, e.message , Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+
+    //Three functions below are to hide the keyboard when done button is pressed
+
+    fun Fragment.hideKeyboard() {
+        view?.let { activity?.hideKeyboard(it) }
+    }
+    fun Activity.hideKeyboard() {
+        hideKeyboard(currentFocus ?: View(this))
+    }
+    fun Context.hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 }
