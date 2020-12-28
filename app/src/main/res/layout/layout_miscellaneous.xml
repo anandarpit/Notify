@@ -6,7 +6,7 @@
     android:background="@drawable/background_misc"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:behavior_peekHeight="@dimen/_48sdp"
+    app:behavior_peekHeight="@dimen/_43sdp"
     android:id="@+id/layout_misc"
     app:layout_behavior="@string/bottom_sheet_behavior">
 
@@ -18,21 +18,22 @@
         android:background="@drawable/view_pulll_up"/>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_35sdp"
+        android:layout_height="@dimen/_30sdp"
         android:gravity="center"
-        android:text="Miscellaneous"
+        android:text="Extras"
         android:textColor="#ffffff"
         android:textSize="@dimen/_13ssp"
-        android:fontFamily="@font/ubuntu_medium"
+        android:textStyle="bold"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_10sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginVertical="@dimen/_5sdp"
         android:gravity="center_vertical"
+        android:paddingHorizontal="@dimen/_20sdp"
         android:orientation="horizontal">
-
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -115,22 +116,14 @@
                 android:padding="@dimen/_10sdp"
                 app:tint="#fff" />
         </FrameLayout>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.1"
-            android:text="Pick Color"
-            android:textColor="#fff"
-            android:fontFamily="@font/ubuntu_light"/>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layout_add_image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_35sdp"
-        android:layout_margin="@dimen/_10sdp"
-        android:gravity="center"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:gravity="start|center"
         android:orientation="horizontal"
         >
         <ImageView
@@ -145,9 +138,31 @@
             android:layout_height="match_parent"
             android:textSize="@dimen/_13ssp"
             android:text="Add Image"
-            android:fontFamily="@font/ubuntu_light"
+            android:textStyle="bold"
             android:textColor="#fff"
             android:gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/url"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:orientation="horizontal"
+        android:gravity="start|center"
+        android:layout_marginBottom="@dimen/_5sdp">
+        <ImageView
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:src="@drawable/ic_baseline_insert_link"
+            app:tint="#fff" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Url"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold"
+            android:textColor="#fff"/>
     </LinearLayout>
 
 </LinearLayout>

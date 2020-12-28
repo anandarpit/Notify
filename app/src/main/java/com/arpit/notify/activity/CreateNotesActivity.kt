@@ -8,19 +8,23 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.AsyncTask
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
+import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -30,16 +34,18 @@ import com.arpit.notify.entities.Note
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_notes.*
+import kotlinx.android.synthetic.main.layout_add_url.view.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.*
-import java.lang.Exception
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.util.*
+
 
 class CreateNotesActivity : AppCompatActivity() {
 
     private lateinit var selectedNoteColor: String
     private lateinit var selectedImagePath: String
+
+    private var dialogAddUrl: AlertDialog? = null
 
     private val REQUEST_GALLERY_CODE = 1
     private val REQUEST_CODE_SELECT_IMAGE = 2
@@ -61,6 +67,8 @@ class CreateNotesActivity : AppCompatActivity() {
 
         setSubTitleIndicatorColor()
 
+
+
     }
 
     private fun setSubTitleIndicatorColor() {
@@ -72,6 +80,11 @@ class CreateNotesActivity : AppCompatActivity() {
 
         val llBottomSheet = findViewById<LinearLayout>(R.id.layout_misc)
         val bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet)
+
+        url.setOnClickListener{
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            showAddUrlDialog()
+        }
 
         layout_misc.setOnClickListener{
             if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED){
@@ -136,8 +149,7 @@ class CreateNotesActivity : AppCompatActivity() {
 
         layout_add_image.setOnClickListener{
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            var permissio = ContextCompat.checkSelfPermission(applicationContext
-            , Manifest.permission.READ_EXTERNAL_STORAGE)
+            var permissio = ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
 
             if(permissio != PackageManager.PERMISSION_GRANTED){
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -173,7 +185,7 @@ class CreateNotesActivity : AppCompatActivity() {
             {
                 addImage()
             }else{
-                Toast.makeText(applicationContext, "Permission Denied!" , Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, "Permission Denied!", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -181,7 +193,7 @@ class CreateNotesActivity : AppCompatActivity() {
     private fun addImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         if(intent.resolveActivity(packageManager)!=null){
-            startActivityForResult(intent,REQUEST_CODE_SELECT_IMAGE)
+            startActivityForResult(intent, REQUEST_CODE_SELECT_IMAGE)
         }
     }
 
@@ -212,6 +224,10 @@ class CreateNotesActivity : AppCompatActivity() {
             note.setColor(selectedNoteColor)
             note.setImagePath(selectedImagePath)
 
+            if(url_link.visibility == View.VISIBLE){
+                note.setWebLink(textwebUrl.text.toString())
+            }
+
             class SaveNotes: AsyncTask<Void, Void, Void>() {
 
                 override fun doInBackground(vararg void: Void?): Void? {
@@ -226,7 +242,7 @@ class CreateNotesActivity : AppCompatActivity() {
 
                     Handler(Looper.getMainLooper()).postDelayed({
                         val intent = Intent()
-                        setResult(RESULT_OK,intent)
+                        setResult(RESULT_OK, intent)
                         finish()
                     }, 500)
 
@@ -256,17 +272,17 @@ class CreateNotesActivity : AppCompatActivity() {
 
                         selectedImagePath = getPathFromUri(selectImageUri)
                     }
-                    catch (e:Exception){
-                        Toast.makeText(applicationContext, e.message , Toast.LENGTH_LONG).show()
+                    catch (e: Exception){
+                        Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
                     }
                 }
             }
         }
     }
 
-    fun getPathFromUri(contentUri:Uri): String {
+    fun getPathFromUri(contentUri: Uri): String {
         var filePath: String
-        var cursor = contentResolver.query(contentUri,null,null,null,null)
+        var cursor = contentResolver.query(contentUri, null, null, null, null)
         if(cursor == null){
             filePath = contentUri.path.toString()
         }
@@ -277,6 +293,27 @@ class CreateNotesActivity : AppCompatActivity() {
             cursor.close()
         }
         return filePath
+    }
+
+    fun showAddUrlDialog(){
+        if (dialogAddUrl == null) {
+            val inflater = layoutInflater
+            val view = inflater.inflate(R.layout.layout_add_url, null)
+            val infoDialogBuilder = AlertDialog.Builder(this@CreateNotesActivity)
+            infoDialogBuilder.setView(view)
+            val infoDialog = infoDialogBuilder.create()
+            infoDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            infoDialog.setContentView(view)
+            infoDialog.show()
+            view.addYes.setOnClickListener {
+                url_link.visibility = View.VISIBLE
+                textwebUrl.setText(view.editText.text.toString())
+                infoDialog.dismiss()
+            }
+            view.cancelNo.setOnClickListener {
+                infoDialog.dismiss()
+            }
+        }
     }
 
 

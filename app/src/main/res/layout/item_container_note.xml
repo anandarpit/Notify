@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_8sdp"
-        android:fontFamily="@font/ubuntu_bold"
         android:textColor="#fff"
+        android:textStyle="bold"
         android:textSize="@dimen/_13ssp"/>
 
     <TextView
@@ -35,7 +35,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_8sdp"
         android:layout_marginVertical="@dimen/_6sdp"
-        android:fontFamily="@font/ubuntu_regular"
         android:textSize="@dimen/_12ssp"
         android:textColor="#FAFAFA"/>
 
@@ -45,7 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_8sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:fontFamily="@font/ubuntu_regular"
         android:textSize="@dimen/_7ssp"
         android:textColor="#FAFAFA"
         />
