@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
@@ -91,6 +92,18 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
 
+        delete_button_for_url.setOnClickListener{
+            textwebUrl.setText("")
+            url_link.visibility = View.GONE
+        }
+
+        delete_button_for_image.setOnClickListener{
+            selectedImagePath=""
+            image_on_create.setImageBitmap(null)
+            image_on_create.visibility = View.GONE
+            delete_button_for_image.visibility = View.GONE
+        }
+
     }
 
     private fun setVieworUpdateNote(noteAllready: Note?) {
@@ -103,6 +116,7 @@ class CreateNotesActivity : AppCompatActivity() {
             if(noteAllready.getImagePath() != null && !noteAllready.getImagePath().toString().trim().isEmpty()){
                 image_on_create.setImageBitmap(BitmapFactory.decodeFile(noteAllready.getImagePath()));
                 image_on_create.setVisibility(View.VISIBLE);
+                delete_button_for_image.visibility = View.VISIBLE
                 selectedImagePath = noteAllready.getImagePath()
             }
             if(noteAllready.getWebLink() != null && !noteAllready.getWebLink().toString().trim().isEmpty()){
@@ -291,7 +305,7 @@ class CreateNotesActivity : AppCompatActivity() {
             note.setColor(selectedNoteColor)
             note.setImagePath(selectedImagePath)
 
-            if(url_link.visibility == View.VISIBLE){
+            if(url_link.visibility == View.VISIBLE && !textwebUrl.text.toString().isEmpty()){
                 note.setWebLink(textwebUrl.text.toString())
             }
 
@@ -341,7 +355,7 @@ class CreateNotesActivity : AppCompatActivity() {
                         val bitmap = BitmapFactory.decodeStream(inputStream)
                         image_on_create.setImageBitmap(bitmap)
                         image_on_create.visibility = View.VISIBLE
-
+                        delete_button_for_image.visibility = View.VISIBLE
                         selectedImagePath = getPathFromUri(selectImageUri)
                     }
                     catch (e: Exception){

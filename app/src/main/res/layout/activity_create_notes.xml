@@ -118,7 +118,26 @@
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/subtitle_edit_text" />
+
+            <ImageView
+                android:id="@+id/delete_button_for_image"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:background="@drawable/background_delete"
+                android:padding="@dimen/_5sdp"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:src="@drawable/ic_baseline_delete_24"
+                app:layout_constraintBottom_toBottomOf="@+id/image_on_create"
+                app:layout_constraintEnd_toEndOf="@+id/image_on_create"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="@+id/image_on_create"
+                app:layout_constraintTop_toTopOf="@+id/image_on_create"
+                app:layout_constraintVertical_bias="0" />
 
             <LinearLayout
                 android:id="@+id/url_link"
@@ -140,6 +159,11 @@
                     android:layout_weight="1"
                     android:autoLink="web"
                     android:textSize="@dimen/_13ssp" />
+                <ImageView
+                    android:id="@+id/delete_button_for_url"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_baseline_delete_24"/>
             </LinearLayout>
 
             <EditText
