@@ -17,10 +17,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
-import android.view.ContextThemeWrapper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -45,6 +42,8 @@ class CreateNotesActivity : AppCompatActivity() {
     private lateinit var selectedNoteColor: String
     private lateinit var selectedImagePath: String
 
+    private var viewOrOpenedNote: Note? = null
+
     private var dialogAddUrl: AlertDialog? = null
 
     private val REQUEST_GALLERY_CODE = 1
@@ -67,6 +66,31 @@ class CreateNotesActivity : AppCompatActivity() {
 
         setSubTitleIndicatorColor()
 
+        if(intent.getBooleanExtra("isViewOrUpdate", false)){
+            viewOrOpenedNote = intent.getSerializableExtra("note") as Note?
+            setVieworUpdateNote(viewOrOpenedNote)
+        }
+
+    }
+
+    private fun setVieworUpdateNote(noteAllready: Note?) {
+        if (noteAllready != null) {
+            title_edit_text.setText(noteAllready.getTitle())
+            subtitle_edit_text.setText(noteAllready.getSubtitle())
+            note_text.setText(noteAllready.getNoteText())
+            datetime.setText(noteAllready.getDateTime())
+
+            if(noteAllready.getImagePath() != null && !noteAllready.getImagePath().toString().trim().isEmpty()){
+                image_on_create.setImageBitmap(BitmapFactory.decodeFile(noteAllready.getImagePath()));
+                image_on_create.setVisibility(View.VISIBLE);
+                selectedImagePath = noteAllready.getImagePath()
+            }
+            if(noteAllready.getWebLink() != null && !noteAllready.getWebLink().toString().trim().isEmpty()){
+                textwebUrl.setText(noteAllready.getWebLink())
+                url_link.visibility = View.VISIBLE
+
+            }
+        }
 
 
     }
@@ -145,6 +169,25 @@ class CreateNotesActivity : AppCompatActivity() {
             tick_four.setImageResource(0)
             tick_five.setImageResource(R.drawable.ic_single_done)
             setSubTitleIndicatorColor()
+        }
+
+        if(viewOrOpenedNote != null && viewOrOpenedNote!!.color != null && viewOrOpenedNote!!.color.trim().isEmpty()){
+            if(viewOrOpenedNote!!.color == "#4CAF50"){
+                tick_five.performClick()
+            }
+            if(viewOrOpenedNote!!.color == "#3A52Fc"){
+                tick_four.performClick()
+            }
+            if(viewOrOpenedNote!!.color == "#FF4842"){
+                tick_three.performClick()
+            }
+            if(viewOrOpenedNote!!.color == "#FDBE3B"){
+                tick_two.performClick()
+            }
+            if(viewOrOpenedNote!!.color == "#333333"){
+                tick_one.performClick()
+
+            }
         }
 
         layout_add_image.setOnClickListener{
@@ -226,6 +269,10 @@ class CreateNotesActivity : AppCompatActivity() {
 
             if(url_link.visibility == View.VISIBLE){
                 note.setWebLink(textwebUrl.text.toString())
+            }
+
+            if(viewOrOpenedNote != null){
+                note.setId(viewOrOpenedNote!!.getId())
             }
 
             class SaveNotes: AsyncTask<Void, Void, Void>() {
@@ -315,7 +362,6 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
     }
-
 
     //Three functions below are to hide the keyboard when done button is pressed
 

@@ -11,11 +11,17 @@ import com.arpit.notify.R
 import com.arpit.notify.adapter.NoteAdapter
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
+import com.arpit.notify.listeners.NotesListeners
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NotesListeners  {
     var myList: MutableList<Note> = mutableListOf<Note>()
     lateinit var noteAdapter: NoteAdapter
+
+    val REQUEST_CODE_ADD_NOTE = 1
+    val REQUEST_CODE_UPDATE_NOTE = 2
+    val REQUEST_CODE_SHOW_NOTES = 3
+    private var noteClickedPosition = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,18 +30,18 @@ class MainActivity : AppCompatActivity() {
 
         add_note.setOnClickListener{
             val intent = Intent(this, CreateNotesActivity::class.java)
-            startActivityForResult(intent, 10000)
+            startActivityForResult(intent, REQUEST_CODE_ADD_NOTE)
         }
 
         recyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-        noteAdapter = NoteAdapter(myList)
+        noteAdapter = NoteAdapter(myList, this)
         recyclerView.adapter = noteAdapter
 
-        getNote()
+        getNote(REQUEST_CODE_SHOW_NOTES)
     }
 
-    private fun getNote() {
+    private fun getNote(requestCode: Int) {
         @SuppressLint("StaticFieldLeak")
         class GetNoteTask: AsyncTask<Void,Void,List<Note>>() {
             override fun doInBackground(vararg p0: Void?): List<Note>? {
@@ -66,8 +72,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == RESULT_OK && requestCode ==10000){
-            getNote()
+        if(resultCode == RESULT_OK && requestCode ==REQUEST_CODE_ADD_NOTE){
+            getNote(REQUEST_CODE_ADD_NOTE)
         }
+        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_NOTE){
+            if(data != null){
+                getNote(REQUEST_CODE_UPDATE_NOTE)
+            }
+        }
+    }
+
+    override fun onNoteClicked(note: Note?, position: Int) {
+        noteClickedPosition = position
+        val intent = Intent(this, CreateNotesActivity::class.java)
+        intent.putExtra("isViewOrUpdate",true)
+        intent.putExtra("note",note)
+        startActivityForResult(intent,REQUEST_CODE_UPDATE_NOTE)
     }
 }

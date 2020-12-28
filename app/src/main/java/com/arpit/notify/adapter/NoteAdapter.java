@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.arpit.notify.R;
 import com.arpit.notify.entities.Note;
+import com.arpit.notify.listeners.NotesListeners;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.List;
@@ -21,9 +22,11 @@ import java.util.List;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
 
     private List<Note> list;
+    public NotesListeners notesListeners;
 
-    public NoteAdapter(List<Note> list) {
+    public NoteAdapter(List<Note> list, NotesListeners notesListeners) {
         this.list = list;
+        this.notesListeners = notesListeners;
     }
 
     @NonNull
@@ -38,6 +41,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.myAdapter holder, int position) {
         holder.bind(list.get(position));
+        holder.layoutContaier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                notesListeners.onNoteClicked(list.get(position),position);
+            }
+        });
     }
 
     @Override
@@ -96,7 +105,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             else{
                 noteImage.setVisibility(View.GONE);
             }
-
 
         }
     }
