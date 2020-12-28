@@ -33,6 +33,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_notes.*
 import kotlinx.android.synthetic.main.layout_add_url.view.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.*
+import kotlinx.android.synthetic.main.layout_miscellaneous.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -70,6 +71,25 @@ class CreateNotesActivity : AppCompatActivity() {
             viewOrOpenedNote = intent.getSerializableExtra("note") as Note?
             setVieworUpdateNote(viewOrOpenedNote)
         }
+        if(viewOrOpenedNote != null && viewOrOpenedNote!!.getColor() != null){
+            Log.d("ArpitAnand",viewOrOpenedNote!!.getColor())
+
+            if(viewOrOpenedNote!!.getColor().equals("#4CAF50")){
+                five()
+            }
+            if(viewOrOpenedNote!!.getColor().equals("#3A52Fc")){
+                four()
+            }
+            if(viewOrOpenedNote!!.getColor().equals("#FF4842")){
+                three()
+            }
+            if(viewOrOpenedNote!!.getColor().equals("#FDBE3B")){
+                two()
+            }
+            if(viewOrOpenedNote!!.getColor().equals("#333333")){
+                one()
+            }
+        }
 
     }
 
@@ -102,6 +122,7 @@ class CreateNotesActivity : AppCompatActivity() {
 
     private fun initMiscellaneou() {
 
+
         val llBottomSheet = findViewById<LinearLayout>(R.id.layout_misc)
         val bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet)
 
@@ -120,75 +141,23 @@ class CreateNotesActivity : AppCompatActivity() {
         }
 
         tick_one.setOnClickListener{
-            selectedNoteColor = "#333333"
-
-            tick_one.setImageResource(R.drawable.ic_single_done)
-            tick_two.setImageResource(0)
-            tick_three.setImageResource(0)
-            tick_four.setImageResource(0)
-            tick_five.setImageResource(0)
-            setSubTitleIndicatorColor()
+            one()
         }
 
         tick_two.setOnClickListener{
-            selectedNoteColor = "#FDBE3B"
-
-            tick_one.setImageResource(0)
-            tick_two.setImageResource(R.drawable.ic_single_done)
-            tick_three.setImageResource(0)
-            tick_four.setImageResource(0)
-            tick_five.setImageResource(0)
-            setSubTitleIndicatorColor()
+           two()
         }
         tick_three.setOnClickListener{
-            selectedNoteColor = "#FF4842"
-
-            tick_one.setImageResource(0)
-            tick_two.setImageResource(0)
-            tick_three.setImageResource(R.drawable.ic_single_done)
-            tick_four.setImageResource(0)
-            tick_five.setImageResource(0)
-            setSubTitleIndicatorColor()
+           three()
         }
         tick_four.setOnClickListener{
-            selectedNoteColor = "#3A52Fc"
-
-            tick_one.setImageResource(0)
-            tick_two.setImageResource(0)
-            tick_three.setImageResource(0)
-            tick_four.setImageResource(R.drawable.ic_single_done)
-            tick_five.setImageResource(0)
-            setSubTitleIndicatorColor()
+            four()
         }
         tick_five.setOnClickListener{
-            selectedNoteColor = "#4CAF50"
-
-            tick_one.setImageResource(0)
-            tick_two.setImageResource(0)
-            tick_three.setImageResource(0)
-            tick_four.setImageResource(0)
-            tick_five.setImageResource(R.drawable.ic_single_done)
-            setSubTitleIndicatorColor()
+           five()
         }
 
-        if(viewOrOpenedNote != null && viewOrOpenedNote!!.color != null && viewOrOpenedNote!!.color.trim().isEmpty()){
-            if(viewOrOpenedNote!!.color == "#4CAF50"){
-                tick_five.performClick()
-            }
-            if(viewOrOpenedNote!!.color == "#3A52Fc"){
-                tick_four.performClick()
-            }
-            if(viewOrOpenedNote!!.color == "#FF4842"){
-                tick_three.performClick()
-            }
-            if(viewOrOpenedNote!!.color == "#FDBE3B"){
-                tick_two.performClick()
-            }
-            if(viewOrOpenedNote!!.color == "#333333"){
-                tick_one.performClick()
 
-            }
-        }
 
         layout_add_image.setOnClickListener{
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -218,6 +187,61 @@ class CreateNotesActivity : AppCompatActivity() {
 
 
         }
+    }
+
+    private fun five() {
+        selectedNoteColor = "#4CAF50"
+
+        tick_one.setImageResource(0)
+        tick_two.setImageResource(0)
+        tick_three.setImageResource(0)
+        tick_four.setImageResource(0)
+        tick_five.setImageResource(R.drawable.ic_single_done)
+        setSubTitleIndicatorColor()
+    }
+
+    private fun four() {
+        selectedNoteColor = "#3A52Fc"
+
+        tick_one.setImageResource(0)
+        tick_two.setImageResource(0)
+        tick_three.setImageResource(0)
+        tick_four.setImageResource(R.drawable.ic_single_done)
+        tick_five.setImageResource(0)
+        setSubTitleIndicatorColor()
+    }
+
+    private fun three() {
+        selectedNoteColor = "#FF4842"
+
+        tick_one.setImageResource(0)
+        tick_two.setImageResource(0)
+        tick_three.setImageResource(R.drawable.ic_single_done)
+        tick_four.setImageResource(0)
+        tick_five.setImageResource(0)
+        setSubTitleIndicatorColor()
+    }
+
+    private fun two() {
+        selectedNoteColor = "#FDBE3B"
+
+        tick_one.setImageResource(0)
+        tick_two.setImageResource(R.drawable.ic_single_done)
+        tick_three.setImageResource(0)
+        tick_four.setImageResource(0)
+        tick_five.setImageResource(0)
+        setSubTitleIndicatorColor()
+    }
+
+    private fun one() {
+        selectedNoteColor = "#333333"
+
+        tick_one.setImageResource(R.drawable.ic_single_done)
+        tick_two.setImageResource(0)
+        tick_three.setImageResource(0)
+        tick_four.setImageResource(0)
+        tick_five.setImageResource(0)
+        setSubTitleIndicatorColor()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -287,6 +311,7 @@ class CreateNotesActivity : AppCompatActivity() {
                     Log.d("Arptii", result.toString())
                     hideKeyboard() // Hide the Keyboard
 
+                    val intent = Intent()
                     Handler(Looper.getMainLooper()).postDelayed({
                         val intent = Intent()
                         setResult(RESULT_OK, intent)
