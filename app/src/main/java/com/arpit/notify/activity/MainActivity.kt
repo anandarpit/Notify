@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -40,6 +42,23 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         noteAdapter = NoteAdapter(myList, this)
         recyclerView.adapter = noteAdapter
         getNote(REQUEST_CODE_SHOW_NOTES, false)
+
+
+        searchNote.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                noteAdapter.cancelTimer()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+               if(myList.size != 0)
+                   noteAdapter.searchNotes(p0.toString())
+            }
+
+        })
     }
 
     private fun getNote(requestCode: Int, isNoteDeleted: Boolean) {
@@ -67,7 +86,7 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                 }
                 else if(requestCode == REQUEST_CODE_UPDATE_NOTE){
                     myList.removeAt(noteClickedPosition)
-                   
+
                     if(isNoteDeleted){
                         noteAdapter.notifyItemRemoved(noteClickedPosition)
                     }
