@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package com.arpit.notify.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -11,7 +14,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
@@ -25,7 +27,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.arpit.notify.R
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
@@ -41,6 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+@Suppress("DEPRECATION")
 class CreateNotesActivity : AppCompatActivity() {
 
     private lateinit var selectedNoteColor: String
@@ -113,6 +115,9 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
 
+        goback.setOnClickListener({
+                finish()
+        })
     }
 
     private fun setVieworUpdateNote(noteAllready: Note?) {
@@ -123,8 +128,8 @@ class CreateNotesActivity : AppCompatActivity() {
             datetime.setText(noteAllready.getDateTime())
 
             if(noteAllready.getImagePath() != null && !noteAllready.getImagePath().toString().trim().isEmpty()){
-                image_on_create.setImageBitmap(BitmapFactory.decodeFile(noteAllready.getImagePath()));
-                image_on_create.setVisibility(View.VISIBLE);
+                image_on_create.setImageBitmap(BitmapFactory.decodeFile(noteAllready.getImagePath()))
+                image_on_create.setVisibility(View.VISIBLE)
                 delete_button_for_image.visibility = View.VISIBLE
                 selectedImagePath = noteAllready.getImagePath()
             }
@@ -184,7 +189,7 @@ class CreateNotesActivity : AppCompatActivity() {
 
         layout_add_image.setOnClickListener{
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            var permissio = ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+            val permissio = ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
 
             if(permissio != PackageManager.PERMISSION_GRANTED){
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -315,6 +320,7 @@ class CreateNotesActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private fun addImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         if(intent.resolveActivity(packageManager)!=null){
@@ -332,59 +338,59 @@ class CreateNotesActivity : AppCompatActivity() {
         val Title = title_edit_text.text.toString()
         val notes = note_text.text.toString()
         val subtitle = subtitle_edit_text.text.toString()
-        if(Title.isEmpty()){
-            view.snack("Title cannot be empty!")
-            return
-        }
-        else if(notes.isEmpty()){
-            view.snack("Notes Cannot be Empty")
-            return
-        }
-        else{
-            val note = Note()
-            note.setTitle(Title)
-            note.setSubtitle(subtitle)
-            note.setNoteText(notes)
-            note.setDateTime(datetime.text.toString())
-            note.setColor(selectedNoteColor)
-            note.setImagePath(selectedImagePath)
-
-            if(url_link.visibility == View.VISIBLE && !textwebUrl.text.toString().isEmpty()){
-                note.setWebLink(textwebUrl.text.toString())
+        when {
+            Title.isEmpty() -> {
+                view.snack("Title cannot be empty!")
+                return
             }
-
-            if(viewOrOpenedNote != null){
-                note.setId(viewOrOpenedNote!!.getId())
+            notes.isEmpty() -> {
+                view.snack("Notes Cannot be Empty")
+                return
             }
+            else -> {
+                val note = Note()
+                note.setTitle(Title)
+                note.setSubtitle(subtitle)
+                note.setNoteText(notes)
+                note.setDateTime(datetime.text.toString())
+                note.setColor(selectedNoteColor)
+                note.setImagePath(selectedImagePath)
 
-            class SaveNotes: AsyncTask<Void, Void, Void>() {
-
-                override fun doInBackground(vararg void: Void?): Void? {
-                    NotesDatabase.getDatabase(applicationContext).noteDao().insertNote(note)
-                    return null
+                if(url_link.visibility == View.VISIBLE && !textwebUrl.text.toString().isEmpty()){
+                    note.setWebLink(textwebUrl.text.toString())
                 }
 
-                override fun onPostExecute(result: Void?) {
-                    super.onPostExecute(result)
-                    Log.d("Arptii", result.toString())
-                    hideKeyboard() // Hide the Keyboard
-
-                    val intent = Intent()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
-                    }, 500)
-
+                if(viewOrOpenedNote != null){
+                    note.setId(viewOrOpenedNote!!.getId())
                 }
-            }
 
-            SaveNotes().execute()
+                class SaveNotes: AsyncTask<Void, Void, Void>() {
+
+                    override fun doInBackground(vararg void: Void?): Void? {
+                        NotesDatabase.getDatabase(applicationContext).noteDao().insertNote(note)
+                        return null
+                    }
+
+                    override fun onPostExecute(result: Void?) {
+                        super.onPostExecute(result)
+                        hideKeyboard() // Hide the Keyboard
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }, 500)
+
+                    }
+                }
+
+                SaveNotes().execute()
+            }
         }
 
     }
 
-    fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
+    private fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
         Snackbar.make(this, message, duration).show()
     }
 
@@ -410,22 +416,22 @@ class CreateNotesActivity : AppCompatActivity() {
         }
     }
 
-    fun getPathFromUri(contentUri: Uri): String {
-        var filePath: String
-        var cursor = contentResolver.query(contentUri, null, null, null, null)
+    private fun getPathFromUri(contentUri: Uri): String {
+        val filePath: String
+        val cursor = contentResolver.query(contentUri, null, null, null, null)
         if(cursor == null){
             filePath = contentUri.path.toString()
         }
         else{
             cursor.moveToFirst()
-            var index = cursor.getColumnIndex("_data")
+            val index = cursor.getColumnIndex("_data")
             filePath= cursor.getString(index)
             cursor.close()
         }
         return filePath
     }
 
-    fun showAddUrlDialog(){
+    private fun showAddUrlDialog(){
         if (dialogAddUrl == null) {
             val inflater = layoutInflater
             val view = inflater.inflate(R.layout.layout_add_url, null)
@@ -448,13 +454,10 @@ class CreateNotesActivity : AppCompatActivity() {
 
     //Three functions below are to hide the keyboard when done button is pressed
 
-    fun Fragment.hideKeyboard() {
-        view?.let { activity?.hideKeyboard(it) }
-    }
     fun Activity.hideKeyboard() {
         hideKeyboard(currentFocus ?: View(this))
     }
-    fun Context.hideKeyboard(view: View) {
+    private fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
