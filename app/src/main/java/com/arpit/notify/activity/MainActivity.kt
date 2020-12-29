@@ -39,10 +39,10 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
 
         noteAdapter = NoteAdapter(myList, this)
         recyclerView.adapter = noteAdapter
-        getNote(REQUEST_CODE_SHOW_NOTES)
+        getNote(REQUEST_CODE_SHOW_NOTES, false)
     }
 
-    private fun getNote(requestCode: Int) {
+    private fun getNote(requestCode: Int, isNoteDeleted: Boolean) {
         @SuppressLint("StaticFieldLeak")
         class GetNoteTask: AsyncTask<Void, Void, List<Note>>() {
             override fun doInBackground(vararg p0: Void?): List<Note>? {
@@ -66,10 +66,15 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                     }
                 }
                 else if(requestCode == REQUEST_CODE_UPDATE_NOTE){
-                    Log.d("noteposition",noteClickedPosition.toString())
                     myList.removeAt(noteClickedPosition)
-                    if (result != null) {
-                        myList.add(noteClickedPosition, result.get(noteClickedPosition))
+                   
+                    if(isNoteDeleted){
+                        noteAdapter.notifyItemRemoved(noteClickedPosition)
+                    }
+                    else{
+                        if (result != null) {
+                            myList.add(noteClickedPosition, result.get(noteClickedPosition))
+                        }
                         noteAdapter.notifyItemChanged(noteClickedPosition)
                         recyclerView.smoothScrollToPosition(noteClickedPosition)
                     }
@@ -84,10 +89,10 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         super.onActivityResult(requestCode, resultCode, data)
 
             if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ADD_NOTE) {
-                getNote(REQUEST_CODE_ADD_NOTE)
+                getNote(REQUEST_CODE_ADD_NOTE, false)
             } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_NOTE) {
                 if (data != null) {
-                    getNote(REQUEST_CODE_UPDATE_NOTE)
+                    getNote(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted",false))
                 }
             }
 

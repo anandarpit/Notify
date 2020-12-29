@@ -33,6 +33,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_notes.*
 import kotlinx.android.synthetic.main.layout_add_url.view.*
+import kotlinx.android.synthetic.main.layout_add_url.view.editText
+import kotlinx.android.synthetic.main.layout_delete.view.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.view.*
 import java.text.SimpleDateFormat
@@ -102,6 +104,13 @@ class CreateNotesActivity : AppCompatActivity() {
             image_on_create.setImageBitmap(null)
             image_on_create.visibility = View.GONE
             delete_button_for_image.visibility = View.GONE
+        }
+
+        if(viewOrOpenedNote != null){
+            delete.visibility = View.VISIBLE
+            delete.setOnClickListener{
+                deleteDialog()
+            }
         }
 
     }
@@ -195,11 +204,46 @@ class CreateNotesActivity : AppCompatActivity() {
                     makeRequest()
                 }
             }
-            else{
+            else {
                 addImage()
             }
+        }
 
+    }
 
+    private fun deleteDialog() {
+        val inflater = layoutInflater
+        val view = inflater.inflate(R.layout.layout_delete, null)
+        val infoDialogBuilder = AlertDialog.Builder(this@CreateNotesActivity)
+        infoDialogBuilder.setView(view)
+        val infoDialog = infoDialogBuilder.create()
+        infoDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        infoDialog.setContentView(view)
+        infoDialog.show()
+
+        view.deleteYes.setOnClickListener {
+            class DeleteNoteTask: AsyncTask<Void, Void, Void>() {
+
+                override fun doInBackground(vararg void: Void?): Void? {
+                    NotesDatabase.getDatabase(applicationContext).noteDao().delete(viewOrOpenedNote)
+                    return null
+                }
+
+                override fun onPostExecute(result: Void?) {
+                    super.onPostExecute(result)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        val intent = Intent()
+                        intent.putExtra("isNoteDeleted",true)
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }, 300)
+                }
+            }
+            DeleteNoteTask().execute()
+
+        }
+        view.deleteNo.setOnClickListener {
+            infoDialog.dismiss()
         }
     }
 

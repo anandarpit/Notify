@@ -165,4 +165,27 @@
             android:textColor="#fff"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/delete"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_32sdp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_baseline_delete_24"
+            app:tint="#C60C0C" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:textStyle="bold"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="#C60C0C"/>
+    </LinearLayout>
 </LinearLayout>
