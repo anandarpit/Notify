@@ -82,7 +82,7 @@
         android:layout_marginBottom="@dimen/_25sdp"
         android:layout_marginRight="@dimen/_25sdp"
         android:src="@drawable/ic_baseline_add_plain"
-        app:tint="#000"
+        app:tint="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
