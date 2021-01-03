@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Feather Notes</string>
+    <string name="add_note">Add Note</string>
+    <string name="archive">Archive</string>
+    <string name="voice_note">Voice Note</string>
+    <string name="search_notes">Search Notes..</string>
+    <string name="add_imagee">Add Image</string>
 </resources>

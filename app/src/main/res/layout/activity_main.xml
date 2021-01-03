@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#292929"
+    android:id="@+id/mainactivity"
     tools:context=".activity.MainActivity">
 
     <TextView
@@ -48,8 +49,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_35sdp"
             android:background="@null"
-            android:hint="Search Notes.."
+            android:hint="@string/search_notes"
             android:imeOptions="actionDone"
+            android:contentDescription="Search Notes"
             android:importantForAutofill="no"
             android:inputType="text"
             android:paddingHorizontal="@dimen/_5sdp"
@@ -64,28 +66,72 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:paddingHorizontal="@dimen/_5sdp"
-        android:paddingVertical="@dimen/_8sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/_8sdp"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#2F2D2E"
+        android:orientation="horizontal"
+        android:paddingVertical="@dimen/_3sdp"
+        android:paddingStart="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="RtlSymmetry">
+
+        <ImageView
+            android:id="@+id/voice_note"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:padding="@dimen/_5sdp"
+            android:layout_gravity="center"
+            android:background="@drawable/background_add_voice_note"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:contentDescription="@string/voice_note"
+            android:src="@drawable/ic_voice_note"/>
+
+        <ImageView
+            android:layout_width="@dimen/_23sdp"
+            android:layout_height="@dimen/_23sdp"
+            android:layout_marginHorizontal="@dimen/_7sdp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/add_imagee"
+            android:layout_marginVertical="@dimen/_9sdp"
+            android:src="@drawable/ic_baseline_photo" />
+
+        <ImageView
+            android:id="@+id/pin"
+            android:layout_width="@dimen/_23sdp"
+            android:layout_height="@dimen/_23sdp"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/_7sdp"
+            android:contentDescription="@string/archive"
+            android:layout_marginVertical="@dimen/_9sdp"
+            android:src="@drawable/ic_pinn"/>
+
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/add_note"
-        android:layout_width="@dimen/_45sdp"
-        android:layout_height="@dimen/_45sdp"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
         android:background="@drawable/background_add"
-        android:padding="@dimen/_10sdp"
-        app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintVertical_bias="1"
-        android:layout_marginBottom="@dimen/_25sdp"
-        android:layout_marginRight="@dimen/_25sdp"
-        android:src="@drawable/ic_baseline_add_plain"
-        app:tint="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+        android:padding="@dimen/_12sdp"
+        android:contentDescription="@string/add_note"
+        android:src="@drawable/ic_quill"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/linearLayout2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

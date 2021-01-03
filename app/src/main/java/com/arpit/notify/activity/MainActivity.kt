@@ -2,17 +2,24 @@ package com.arpit.notify.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.arpit.notify.R
 import com.arpit.notify.adapter.NoteAdapter
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
 import com.arpit.notify.listeners.NotesListeners
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -42,6 +49,8 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         getNote(REQUEST_CODE_SHOW_NOTES, false)
 
 
+
+
         searchNote.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -57,7 +66,55 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
             }
 
         })
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
+
+    private val itemTouchHelperCallback =
+            object :
+                    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+                override fun onMove(
+                        recyclerView: RecyclerView,
+                        viewHolder: RecyclerView.ViewHolder,
+                        target: RecyclerView.ViewHolder
+                ): Boolean {
+                    // Code for movement
+                    return false
+                }
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val pos = viewHolder.adapterPosition
+                    val deleteItem = myList.get(pos)
+                   // Code for swipe behavior
+                    if(direction == ItemTouchHelper.LEFT){
+                        myList.removeAt(pos)
+                        noteAdapter.notifyDataSetChanged()
+                        onSNACK(mainactivity , "Note Archived")
+                    }
+//                    if(direction == ItemTouchHelper.RIGHT){
+//                    }
+                }
+
+            }
+
+    fun onSNACK(view: View, text: String){
+        val snackbar = Snackbar.make(view, text,
+                Snackbar.LENGTH_LONG).setAction("UNDO", View.OnClickListener {
+
+        })
+        snackbar.setActionTextColor(Color.RED)
+        val snackbarView = snackbar.view
+        snackbarView.setBackgroundColor(Color.parseColor("#333333"))
+        snackbar.show()
+    }
+
+//    noteViewModel.delete(noteAdapter.getNoteAt(viewHolder.adapterPosition))
+//    Toast.makeText(
+//    this@MainActivity,
+//    getString(R.string.note_deleted),
+//    Toast.LENGTH_SHORT
+//    ).show()
+
 
     private fun getNote(requestCode: Int, isNoteDeleted: Boolean) {
         @SuppressLint("StaticFieldLeak")
@@ -121,5 +178,13 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         intent.putExtra("isViewOrUpdate", true)
         intent.putExtra("note", note)
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE)
+    }
+
+    override fun onNoteSelected(note: Note?, position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onNoteLongItemClicked(note: Note?, position: Int) {
+        TODO("Not yet implemented")
     }
 }
