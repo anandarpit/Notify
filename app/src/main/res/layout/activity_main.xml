@@ -100,7 +100,7 @@
         <ImageView
             android:layout_width="@dimen/_23sdp"
             android:layout_height="@dimen/_23sdp"
-            android:layout_marginHorizontal="@dimen/_7sdp"
+            android:layout_marginHorizontal="@dimen/_5sdp"
             android:layout_gravity="center"
             android:contentDescription="@string/add_imagee"
             android:layout_marginVertical="@dimen/_9sdp"
@@ -111,7 +111,7 @@
             android:layout_width="@dimen/_23sdp"
             android:layout_height="@dimen/_23sdp"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/_7sdp"
+            android:layout_marginHorizontal="@dimen/_5sdp"
             android:contentDescription="@string/archive"
             android:layout_marginVertical="@dimen/_9sdp"
             android:src="@drawable/ic_pinn"/>
