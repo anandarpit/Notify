@@ -37,6 +37,17 @@ public class Note implements Serializable {
     @ColumnInfo(name= "web_link")
     private String webLink;
 
+    @ColumnInfo(name = "archived")
+    private Boolean arch;
+
+    public Boolean getArch() {
+        return arch;
+    }
+
+    public void setArch(Boolean arch) {
+        this.arch = arch;
+    }
+
     public int getId() {
         return id;
     }
@@ -103,7 +114,7 @@ public class Note implements Serializable {
 
     @Override
     public String toString() {
-        return title + " : " + dateTime ;
+        return title + " : " + dateTime + " : " + getArch();
     }
 
 }

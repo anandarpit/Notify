@@ -115,9 +115,9 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
 
-        goback.setOnClickListener({
-                finish()
-        })
+        goback.setOnClickListener {
+            finish()
+        }
     }
 
     private fun setVieworUpdateNote(noteAllready: Note?) {
@@ -387,7 +387,6 @@ class CreateNotesActivity : AppCompatActivity() {
                 SaveNotes().execute()
             }
         }
-
     }
 
     private fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {

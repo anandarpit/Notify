@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +32,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
     private Timer timer;
     private List<Note> noteSource;
 
-    public NoteAdapter(List<Note> list, NotesListeners notesListeners) {
-        this.list = list;
+    public NoteAdapter(List<Note> liste, NotesListeners notesListeners) {
+        this.list = liste;
         this.notesListeners = notesListeners;
-        noteSource = list;
+        noteSource = liste;
     }
 
     @NonNull
@@ -87,7 +88,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
 
         public void bind(Note note)
         {
-
             textTitle.setText(note.getTitle());
             textDate.setText(note.getDateTime());
 

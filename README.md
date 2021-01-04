@@ -9,4 +9,4 @@ This is built upon room database.
   </a>
 </p>
 
-![SC1](app/src/main/res/mipmap-mdpi/Screenshot_2020-12-29-18-05-20-273_com.arpit.notify.png)![SC2](app/src/main/res/mipmap-mdpi/SC2.png)![SC3](app/src/main/res/mipmap-mdpi/SC3.png)![SC4](app/src/main/res/mipmap-mdpi/SC4.png)
+![SC1](app/src/main/res/mipmap-mdpi/sc1.png)![SC2](app/src/main/res/mipmap-mdpi/sc2.png)![SC3](app/src/main/res/mipmap-mdpi/sc3.png)![SC4](app/src/main/res/mipmap-mdpi/sc4.png)

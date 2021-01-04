@@ -7,18 +7,22 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.MenuInflater
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.arpit.notify.asyncTasks.ArchiveNoteAsync
 import com.arpit.notify.R
+import com.arpit.notify.asyncTasks.UnArchiveNoteAsync
 import com.arpit.notify.adapter.NoteAdapter
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
 import com.arpit.notify.listeners.NotesListeners
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -30,7 +34,10 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
     val REQUEST_CODE_ADD_NOTE = 1
     val REQUEST_CODE_UPDATE_NOTE = 2
     val REQUEST_CODE_SHOW_NOTES = 3
+
     private var noteClickedPosition = -1
+    var pos = -1
+    var deleteItem: Note? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +55,6 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         recyclerView.adapter = noteAdapter
         getNote(REQUEST_CODE_SHOW_NOTES, false)
 
-
-
-
         searchNote.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -61,19 +65,47 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-               if(myList.size != 0)
-                   noteAdapter.searchNotes(p0.toString())
+                if (myList.size != 0)
+                    noteAdapter.searchNotes(p0.toString())
             }
 
         })
 
+
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
+
+        showmenu.setOnClickListener{
+            showPopup(showmenu)
+        }
+    }
+
+    fun showPopup(v: View){
+        val popup = PopupMenu(this, v)
+        val inflater: MenuInflater = popup.menuInflater
+        inflater.inflate(R.menu.main_menu, popup.menu)
+        popup.setOnMenuItemClickListener { menuItem ->
+            when(menuItem.itemId){
+                R.id.archives -> {
+
+                }
+                R.id.backup -> {
+
+                }
+                R.id.importnotes -> {
+
+                }
+            }
+            true
+        }
+        popup.show()
     }
 
     private val itemTouchHelperCallback =
             object :
-                    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+                    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT
+//                            or ItemTouchHelper.RIGHT
+                    ) {
                 override fun onMove(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
@@ -83,37 +115,41 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                     return false
                 }
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val pos = viewHolder.adapterPosition
-                    val deleteItem = myList.get(pos)
-                   // Code for swipe behavior
+                    pos = viewHolder.adapterPosition
+                    deleteItem = myList.get(pos)
                     if(direction == ItemTouchHelper.LEFT){
                         myList.removeAt(pos)
                         noteAdapter.notifyDataSetChanged()
-                        onSNACK(mainactivity , "Note Archived")
+
+                        val snackbar = Snackbar.make(mainactivity, "Note Archived",
+                                Snackbar.LENGTH_LONG).setAction("UNDO") {
+
+                            if(pos!=-1){
+                                myList.add(pos, deleteItem!!)
+                                noteAdapter.notifyItemInserted(pos)
+                                val unarchiveNoteAsync = UnArchiveNoteAsync(applicationContext, deleteItem)
+                                unarchiveNoteAsync.execute()
+                            }
+                        }
+                        snackbar.setActionTextColor(Color.RED)
+                        val snackbarView = snackbar.view
+                        snackbarView.setBackgroundColor(Color.parseColor("#333333"))
+                        snackbar.show()
+                        snackbar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+
+                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                                super.onDismissed(transientBottomBar, event)
+                                if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT){
+                                    val archiveNoteAsync = ArchiveNoteAsync(applicationContext, deleteItem)
+                                    archiveNoteAsync.execute()
+                                }
+                            }
+                        })
+
                     }
-//                    if(direction == ItemTouchHelper.RIGHT){
-//                    }
                 }
 
             }
-
-    fun onSNACK(view: View, text: String){
-        val snackbar = Snackbar.make(view, text,
-                Snackbar.LENGTH_LONG).setAction("UNDO", View.OnClickListener {
-
-        })
-        snackbar.setActionTextColor(Color.RED)
-        val snackbarView = snackbar.view
-        snackbarView.setBackgroundColor(Color.parseColor("#333333"))
-        snackbar.show()
-    }
-
-//    noteViewModel.delete(noteAdapter.getNoteAt(viewHolder.adapterPosition))
-//    Toast.makeText(
-//    this@MainActivity,
-//    getString(R.string.note_deleted),
-//    Toast.LENGTH_SHORT
-//    ).show()
 
 
     private fun getNote(requestCode: Int, isNoteDeleted: Boolean) {
@@ -123,8 +159,21 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                 return NotesDatabase.getDatabase(applicationContext).noteDao().getAllNotes()
             }
 
-            override fun onPostExecute(result: List<Note>?) {
-                super.onPostExecute(result)
+            override fun onPostExecute(rawResult: List<Note>?) {
+                super.onPostExecute(rawResult)
+                var result = ArrayList<Note>()
+                for (not in rawResult!!) {
+                    if(not.arch != null) {
+                        if (!not.arch) {
+                            result.add(not)
+                            Log.d("xx",not.toString())
+                        }
+                    }
+                    else if(not.arch == null){
+                        result.add(not)
+                        Log.d("xx",not.toString())
+                    }
+                }
                 if(requestCode == REQUEST_CODE_SHOW_NOTES){
                     if (result != null) {
                         myList.addAll(result)
@@ -135,9 +184,9 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                 else if(requestCode==REQUEST_CODE_ADD_NOTE){
                     if (result != null) {
                         myList.add(0, result.get(0))
-                        noteAdapter.notifyItemInserted(0)
-                        recyclerView.smoothScrollToPosition(0)
                     }
+                    noteAdapter.notifyItemInserted(0)
+                    recyclerView.smoothScrollToPosition(0)
                 }
                 else if(requestCode == REQUEST_CODE_UPDATE_NOTE){
                     myList.removeAt(noteClickedPosition)
@@ -153,6 +202,7 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                         recyclerView.smoothScrollToPosition(noteClickedPosition)
                     }
                 }
+
             }
         }
 
@@ -166,7 +216,7 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                 getNote(REQUEST_CODE_ADD_NOTE, false)
             } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_NOTE) {
                 if (data != null) {
-                    getNote(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted",false))
+                    getNote(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted", false))
                 }
             }
 
@@ -178,13 +228,5 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         intent.putExtra("isViewOrUpdate", true)
         intent.putExtra("note", note)
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE)
-    }
-
-    override fun onNoteSelected(note: Note?, position: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onNoteLongItemClicked(note: Note?, position: Int) {
-        TODO("Not yet implemented")
     }
 }

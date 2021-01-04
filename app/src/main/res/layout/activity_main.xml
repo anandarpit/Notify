@@ -24,6 +24,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/showmenu"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintVertical_bias="0.7"
+        android:layout_marginEnd="@dimen/_10sdp"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -105,16 +118,6 @@
             android:contentDescription="@string/add_imagee"
             android:layout_marginVertical="@dimen/_9sdp"
             android:src="@drawable/ic_baseline_photo" />
-
-        <ImageView
-            android:id="@+id/pin"
-            android:layout_width="@dimen/_23sdp"
-            android:layout_height="@dimen/_23sdp"
-            android:layout_gravity="center"
-            android:layout_marginHorizontal="@dimen/_5sdp"
-            android:contentDescription="@string/archive"
-            android:layout_marginVertical="@dimen/_9sdp"
-            android:src="@drawable/ic_pinn"/>
 
     </LinearLayout>
 
