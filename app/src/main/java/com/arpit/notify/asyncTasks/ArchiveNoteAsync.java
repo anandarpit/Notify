@@ -3,11 +3,11 @@ package com.arpit.notify.asyncTasks;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.arpit.notify.database.NotesDatabase;
 import com.arpit.notify.entities.Note;
 
+@SuppressWarnings("ALL")
 public class ArchiveNoteAsync extends AsyncTask<Void,Void,Void> {
 
     @SuppressLint("StaticFieldLeak")
@@ -28,7 +28,6 @@ public class ArchiveNoteAsync extends AsyncTask<Void,Void,Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        Log.d("xx","Added to Archive");
         super.onPostExecute(aVoid);
     }
 }

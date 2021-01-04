@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.arpit.notify.activity
 
 import android.annotation.SuppressLint
@@ -27,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity(), NotesListeners  {
     var myList: MutableList<Note> = mutableListOf<Note>()
     lateinit var noteAdapter: NoteAdapter
@@ -87,7 +90,9 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         popup.setOnMenuItemClickListener { menuItem ->
             when(menuItem.itemId){
                 R.id.archives -> {
-
+                    val intent = Intent(this, ArchiveActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0,0)
                 }
                 R.id.backup -> {
 
@@ -153,6 +158,7 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
 
 
     private fun getNote(requestCode: Int, isNoteDeleted: Boolean) {
+        @Suppress("DEPRECATION")
         @SuppressLint("StaticFieldLeak")
         class GetNoteTask: AsyncTask<Void, Void, List<Note>>() {
             override fun doInBackground(vararg p0: Void?): List<Note>? {
@@ -175,16 +181,12 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                     }
                 }
                 if(requestCode == REQUEST_CODE_SHOW_NOTES){
-                    if (result != null) {
-                        myList.addAll(result)
-                    }
+                    myList.addAll(result)
                     noteAdapter.notifyDataSetChanged()
                     recyclerView.smoothScrollToPosition(0)
                 }
                 else if(requestCode==REQUEST_CODE_ADD_NOTE){
-                    if (result != null) {
-                        myList.add(0, result.get(0))
-                    }
+                    myList.add(0, result.get(0))
                     noteAdapter.notifyItemInserted(0)
                     recyclerView.smoothScrollToPosition(0)
                 }
@@ -195,9 +197,7 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                         noteAdapter.notifyItemRemoved(noteClickedPosition)
                     }
                     else{
-                        if (result != null) {
-                            myList.add(noteClickedPosition, result.get(noteClickedPosition))
-                        }
+                        myList.add(noteClickedPosition, result.get(noteClickedPosition))
                         noteAdapter.notifyItemChanged(noteClickedPosition)
                         recyclerView.smoothScrollToPosition(noteClickedPosition)
                     }
@@ -227,6 +227,7 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         val intent = Intent(this, CreateNotesActivity::class.java)
         intent.putExtra("isViewOrUpdate", true)
         intent.putExtra("note", note)
+        intent.putExtra("fromArchive",false)
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE)
     }
 }

@@ -36,6 +36,7 @@ android {
 dependencies {
 
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 
     //room
     def room_version = "2.2.6"
@@ -51,5 +52,8 @@ dependencies {
 
     //Rounded Image View
     implementation 'com.makeramen:roundedimageview:2.3.0'
+
+    //lottie
+    implementation 'com.airbnb.android:lottie:3.5.0'
 
 }

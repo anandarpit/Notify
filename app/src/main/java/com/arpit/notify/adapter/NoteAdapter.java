@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +27,9 @@ import java.util.TimerTask;
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
 
     private List<Note> list;
-    private NotesListeners notesListeners;
+    private final NotesListeners notesListeners;
     private Timer timer;
-    private List<Note> noteSource;
+    private final List<Note> noteSource;
 
     public NoteAdapter(List<Note> liste, NotesListeners notesListeners) {
         this.list = liste;
@@ -50,12 +49,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.myAdapter holder, int position) {
         holder.bind(list.get(position));
-        holder.layoutContaier.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                notesListeners.onNoteClicked(list.get(position),position);
-            }
-        });
+        holder.layoutContainer.setOnClickListener(view -> notesListeners.onNoteClicked(list.get(position),position));
     }
 
     @Override
@@ -71,9 +65,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
     public static class myAdapter extends RecyclerView.ViewHolder {
 
         TextView textTitle, textSubtitle, textDate;
-        LinearLayout layoutContaier;
+        LinearLayout layoutContainer;
         RoundedImageView noteImage;
-        private Timer timer;
 
         public myAdapter(@NonNull View itemView) {
             super(itemView);
@@ -81,7 +74,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             textTitle = itemView.findViewById(R.id.textTitle);
             textSubtitle = itemView.findViewById(R.id.textSubtitle);
             textDate = itemView.findViewById(R.id.textDate);
-            layoutContaier = itemView.findViewById(R.id.item_container_layout);
+            layoutContainer = itemView.findViewById(R.id.item_container_layout);
             noteImage = itemView.findViewById(R.id.note_image);
 
         }
@@ -98,7 +91,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
                 textSubtitle.setText(note.getSubtitle());
             }
 
-            GradientDrawable gradientDrawable = (GradientDrawable) layoutContaier.getBackground();
+            GradientDrawable gradientDrawable = (GradientDrawable) layoutContainer.getBackground();
 
             if(note.getColor() != null){
                 gradientDrawable.setColor(Color.parseColor(note.getColor()));
@@ -136,12 +129,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
                     }
                     list = temp;
                 }
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
+                new Handler(Looper.getMainLooper()).post(() -> notifyDataSetChanged());
             }
         } ,10);
     }

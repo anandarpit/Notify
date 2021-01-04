@@ -1,10 +1,9 @@
 package com.arpit.notify.entities;
 
-
-import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
 
 import org.jetbrains.annotations.NotNull;
 
@@ -112,6 +111,7 @@ public class Note implements Serializable {
         this.webLink = webLink;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return title + " : " + dateTime + " : " + getArch();

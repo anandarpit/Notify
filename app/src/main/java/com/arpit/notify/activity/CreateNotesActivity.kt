@@ -359,6 +359,9 @@ class CreateNotesActivity : AppCompatActivity() {
                 if(url_link.visibility == View.VISIBLE && !textwebUrl.text.toString().isEmpty()){
                     note.setWebLink(textwebUrl.text.toString())
                 }
+                if(intent.getBooleanExtra("fromArchive", false)){
+                    note.setArch(true)
+                }
 
                 if(viewOrOpenedNote != null){
                     note.setId(viewOrOpenedNote!!.getId())
