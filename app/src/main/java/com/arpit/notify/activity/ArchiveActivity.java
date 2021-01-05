@@ -8,7 +8,11 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.arpit.notify.R;
 import com.arpit.notify.adapter.NoteAdapter;
 import com.arpit.notify.database.NotesDatabase;
@@ -23,9 +27,9 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
     List<Note> myList = new ArrayList<>();
     NoteAdapter noteAdapter;
     RecyclerView recyclerView;
+    EditText search;
     int noteClickedPosition = -1;
 
-    int REQUEST_CODE_ADD_NOTE = 1;
     int REQUEST_CODE_UPDATE_NOTE = 2;
     int REQUEST_CODE_SHOW_NOTES = 3;
 
@@ -35,14 +39,34 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
         setContentView(R.layout.activity_archive);
 
         recyclerView = findViewById(R.id.recyclerView);
+        search = findViewById(R.id.searchArchive);
 
         getArchivedNotes(REQUEST_CODE_SHOW_NOTES,false);
 
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
         recyclerView.setLayoutManager(layoutManager);
         noteAdapter = new NoteAdapter(myList,this);
         recyclerView.setAdapter(noteAdapter);
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                noteAdapter.cancelTimer();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(myList.size() != 0){
+                    noteAdapter.searchNotes(editable.toString());
+                }
+            }
+        });
+
 
     }
 
@@ -71,6 +95,7 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
                         }
                     }
                 }
+
                 if(requestCode == REQUEST_CODE_SHOW_NOTES){
                     myList.addAll(notes);
                     noteAdapter.notifyDataSetChanged();
@@ -109,6 +134,11 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
         intent.putExtra("note", note);
         intent.putExtra("fromArchive",true);
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE);
+    }
+
+    @Override
+    public void onNoteLongedClicked(Note note, int position) {
+
     }
 
     @Override

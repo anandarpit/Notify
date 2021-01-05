@@ -49,6 +49,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
     @Override
     public void onBindViewHolder(@NonNull NoteAdapter.myAdapter holder, int position) {
         holder.bind(list.get(position));
+        holder.setIsRecyclable(false);
         holder.layoutContainer.setOnClickListener(view -> notesListeners.onNoteClicked(list.get(position),position));
     }
 
@@ -61,6 +62,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
     public int getItemViewType(int position) {
         return position;
     }
+
+
 
     public static class myAdapter extends RecyclerView.ViewHolder {
 

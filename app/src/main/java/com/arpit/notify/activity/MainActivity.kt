@@ -4,6 +4,7 @@ package com.arpit.notify.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
@@ -17,20 +18,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.arpit.notify.asyncTasks.ArchiveNoteAsync
 import com.arpit.notify.R
-import com.arpit.notify.asyncTasks.UnArchiveNoteAsync
 import com.arpit.notify.adapter.NoteAdapter
+import com.arpit.notify.asyncTasks.ArchiveNoteAsync
+import com.arpit.notify.asyncTasks.UnArchiveNoteAsync
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
 import com.arpit.notify.listeners.NotesListeners
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 @Suppress("DEPRECATION")
-class MainActivity : AppCompatActivity(), NotesListeners  {
+class MainActivity : AppCompatActivity(), NotesListeners {
     var myList: MutableList<Note> = mutableListOf<Note>()
     lateinit var noteAdapter: NoteAdapter
 
@@ -51,9 +54,10 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
             val intent = Intent(this, CreateNotesActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE_ADD_NOTE)
         }
-
-        recyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-
+        val layoutmanager = StaggeredGridLayoutManager(if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 3 else 2, StaggeredGridLayoutManager.VERTICAL)
+        layoutmanager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutmanager
         noteAdapter = NoteAdapter(myList, this)
         recyclerView.adapter = noteAdapter
         getNote(REQUEST_CODE_SHOW_NOTES, false)
@@ -92,7 +96,7 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                 R.id.archives -> {
                     val intent = Intent(this, ArchiveActivity::class.java)
                     startActivity(intent)
-                    overridePendingTransition(0,0)
+                    overridePendingTransition(0, 0)
                 }
                 R.id.backup -> {
 
@@ -108,26 +112,100 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
 
     private val itemTouchHelperCallback =
             object :
-                    ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT
-//                            or ItemTouchHelper.RIGHT
+                    ItemTouchHelper.SimpleCallback(0, 0
                     ) {
+                var dragFrom = -1
+                var dragTo = -1
+                private var dragFromPosition = -1
+                private var dragToPosition = -1
+                override fun isLongPressDragEnabled(): Boolean {
+                    return true
+                }
+
+                override fun isItemViewSwipeEnabled(): Boolean {
+                    return true
+                }
+
+                override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+                    val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
+                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                    val swipeFlags = ItemTouchHelper.START or ItemTouchHelper.END
+                    return makeMovementFlags(dragFlags, swipeFlags)
+                }
+
                 override fun onMove(
                         recyclerView: RecyclerView,
                         viewHolder: RecyclerView.ViewHolder,
                         target: RecyclerView.ViewHolder
                 ): Boolean {
-                    // Code for movement
-                    return false
+//                    val fromPosition = viewHolder.adapterPosition
+//                    val toPosition = target.adapterPosition
+//
+//                    if(dragFrom == -1) {
+//                        dragFrom =  fromPosition
+//                    }
+//                    dragTo = toPosition
+//                    onItemMove(fromPosition, toPosition)
+
+                    dragToPosition = target.adapterPosition
+
+
+                    return true
+                }
+
+                override fun getSwipeEscapeVelocity(defaultValue: Float): Float {
+                    return super.getSwipeEscapeVelocity(50F)
+                }
+                //                private fun reallyMoved(from: Int, to: Int) {
+//                    Collections.swap(myList, from, to)
+//                    noteAdapter.notifyItemMoved(from, to)
+//                }
+
+//                override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+//                    super.clearView(recyclerView!!, viewHolder!!)
+//                    if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+//                        reallyMoved(dragFrom, dragTo)
+//                    }
+//                    dragTo = -1
+//                    dragFrom = dragTo
+//                }
+
+//                fun onItemMove(fromPosition: Int, toPosition: Int) {
+//                    myList.add(toPosition, myList.removeAt(fromPosition))
+//                    noteAdapter.notifyItemMoved(fromPosition, toPosition)
+//                }
+                private fun onItemDragged(from: Int, to: Int) {
+                        Collections.swap(myList, from, to)
+                        noteAdapter.notifyItemMoved(from, to)
+                }
+
+
+                override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+                    super.onSelectedChanged(viewHolder, actionState)
+
+                    when (actionState) {
+                        ItemTouchHelper.ACTION_STATE_DRAG -> {
+                            viewHolder?.also { dragFromPosition = it.adapterPosition }
+                        }
+                        ItemTouchHelper.ACTION_STATE_IDLE -> {
+                            if (dragFromPosition != -1 && dragToPosition != -1 && dragFromPosition != dragToPosition) {
+                                // Item successfully dragged
+                                onItemDragged(dragFromPosition, dragToPosition)
+                                // Reset drag positions
+                                dragFromPosition = -1
+                                dragToPosition = -1
+                            }
+                        }
+                    }
                 }
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     pos = viewHolder.adapterPosition
                     deleteItem = myList.get(pos)
-                    if(direction == ItemTouchHelper.LEFT){
                         myList.removeAt(pos)
                         noteAdapter.notifyDataSetChanged()
 
-                        val snackbar = Snackbar.make(mainactivity, "Note Archived",
-                                Snackbar.LENGTH_LONG).setAction("UNDO") {
+                        val snackbar = Snackbar.make(mainactivity, "Archiving...",
+                                1800).setAction("CANCEL") {
 
                             if(pos!=-1){
                                 myList.add(pos, deleteItem!!)
@@ -144,17 +222,18 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
 
                             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                                 super.onDismissed(transientBottomBar, event)
-                                if(event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT){
+                                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
                                     val archiveNoteAsync = ArchiveNoteAsync(applicationContext, deleteItem)
                                     archiveNoteAsync.execute()
+                                    val snackbar = Snackbar.make(mainactivity, "Archived!",
+                                            700).show()
                                 }
                             }
                         })
-
-                    }
                 }
 
             }
+
 
 
     private fun getNote(requestCode: Int, isNoteDeleted: Boolean) {
@@ -172,12 +251,12 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                     if(not.arch != null) {
                         if (!not.arch) {
                             result.add(not)
-                            Log.d("xx",not.toString())
+                            Log.d("xx", not.toString())
                         }
                     }
                     else if(not.arch == null){
                         result.add(not)
-                        Log.d("xx",not.toString())
+                        Log.d("xx", not.toString())
                     }
                 }
                 if(requestCode == REQUEST_CODE_SHOW_NOTES){
@@ -194,9 +273,11 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
                     myList.removeAt(noteClickedPosition)
 
                     if(isNoteDeleted){
-                        noteAdapter.notifyItemRemoved(noteClickedPosition)
+                        noteAdapter.notifyDataSetChanged()
+                        Log.d("xxxx", noteClickedPosition.toString())
                     }
                     else{
+                        Log.d("xxxx", noteClickedPosition.toString())
                         myList.add(noteClickedPosition, result.get(noteClickedPosition))
                         noteAdapter.notifyItemChanged(noteClickedPosition)
                         recyclerView.smoothScrollToPosition(noteClickedPosition)
@@ -227,7 +308,12 @@ class MainActivity : AppCompatActivity(), NotesListeners  {
         val intent = Intent(this, CreateNotesActivity::class.java)
         intent.putExtra("isViewOrUpdate", true)
         intent.putExtra("note", note)
-        intent.putExtra("fromArchive",false)
+        intent.putExtra("fromArchive", false)
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE)
     }
+
+    override fun onNoteLongedClicked(note: Note?, position: Int) {
+        TODO("Not yet implemented")
+    }
+
 }

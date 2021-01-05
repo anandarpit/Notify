@@ -35,6 +35,24 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
+            <TextView
+                android:id="@+id/archiveTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ARCHIVE"
+                android:textColor="#dbdbdb"
+                android:textSize="@dimen/_9ssp"
+                android:padding="@dimen/_4sdp"
+                android:textStyle="italic"
+                android:visibility="invisible"
+                android:background="@drawable/background_archive"
+                app:layout_constraintHorizontal_bias="0"
+                android:layout_marginStart="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/goback"
+                app:layout_constraintEnd_toStartOf="@+id/done"
+                app:layout_constraintStart_toEndOf="@+id/goback"
+                app:layout_constraintTop_toTopOf="@+id/goback" />
+
             <ImageView
                 android:id="@+id/done"
                 android:layout_width="@dimen/_20sdp"

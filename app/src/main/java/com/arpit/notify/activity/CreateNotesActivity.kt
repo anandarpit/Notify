@@ -76,6 +76,10 @@ class CreateNotesActivity : AppCompatActivity() {
             viewOrOpenedNote = intent.getSerializableExtra("note") as Note?
             setVieworUpdateNote(viewOrOpenedNote)
         }
+        if(intent.getBooleanExtra("fromArchive", false)){
+            archiveTag.visibility = View.VISIBLE
+        }
+
         if(viewOrOpenedNote != null && viewOrOpenedNote!!.getColor() != null){
             Log.d("ArpitAnand",viewOrOpenedNote!!.getColor())
 

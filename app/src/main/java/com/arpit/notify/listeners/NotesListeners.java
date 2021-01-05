@@ -4,4 +4,5 @@ import com.arpit.notify.entities.Note;
 
 public interface NotesListeners {
     void onNoteClicked(Note note, int position);
+    void onNoteLongedClicked(Note note, int position);
 }
