@@ -1,23 +1,32 @@
 package com.arpit.notify.activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.ItemTouchHelper.Callback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.arpit.notify.R;
 import com.arpit.notify.adapter.NoteAdapter;
+import com.arpit.notify.asyncTasks.ArchiveNoteAsync;
+import com.arpit.notify.asyncTasks.UnArchiveNoteAsync;
 import com.arpit.notify.database.NotesDatabase;
 import com.arpit.notify.entities.Note;
 import com.arpit.notify.listeners.NotesListeners;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +36,16 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
     List<Note> myList = new ArrayList<>();
     NoteAdapter noteAdapter;
     RecyclerView recyclerView;
+    ConstraintLayout constraintLayout;
     EditText search;
     int noteClickedPosition = -1;
+    int flag =0;
 
     int REQUEST_CODE_UPDATE_NOTE = 2;
     int REQUEST_CODE_SHOW_NOTES = 3;
+
+    int pos = -1;
+    Note unArchiveNote = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +54,7 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
 
         recyclerView = findViewById(R.id.recyclerView);
         search = findViewById(R.id.searchArchive);
+        constraintLayout = findViewById(R.id.archiveactivity);
 
         getArchivedNotes(REQUEST_CODE_SHOW_NOTES,false);
 
@@ -47,6 +62,10 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
         recyclerView.setLayoutManager(layoutManager);
         noteAdapter = new NoteAdapter(myList,this);
         recyclerView.setAdapter(noteAdapter);
+
+        ItemTouchHelper.Callback itemTouchHelperCallback;
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -69,6 +88,63 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
 
 
     }
+
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,0) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public boolean isItemViewSwipeEnabled() { return true; }
+        @Override
+        public float getSwipeEscapeVelocity(float defaultValue) {return 50000f;}
+        @Override
+        public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {return 0.6f;}
+
+        @Override
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            int dragFlags = 0;
+            int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+            return makeMovementFlags(dragFlags, swipeFlags);
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            pos = viewHolder.getAdapterPosition();
+            unArchiveNote = myList.get(pos);
+            myList.remove(pos);
+            noteAdapter.notifyDataSetChanged();
+
+            Snackbar snack = Snackbar.make(constraintLayout, "Removing from Archives...", 1800 )
+                    .setAction("CANCEL", view -> {
+                        if(pos!=-1){
+                            myList.add(pos, unArchiveNote);
+                            noteAdapter.notifyItemInserted(pos);
+                            ArchiveNoteAsync archiveNoteAsync = new ArchiveNoteAsync(getApplicationContext(), unArchiveNote);
+                            archiveNoteAsync.execute();
+                        }
+                    });
+            snack.setActionTextColor(Color.RED);
+            View view = snack.getView();
+            view.setBackgroundColor(Color.parseColor("#333333"));
+            snack.show();
+            snack.addCallback(new Snackbar.Callback() {
+
+                @Override
+                public void onDismissed(Snackbar snackbar, int event) {
+                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
+
+                        UnArchiveNoteAsync unArchiveNoteAsync = new UnArchiveNoteAsync(getApplicationContext(),unArchiveNote);
+                        unArchiveNoteAsync.execute();
+                        flag = 1;
+                        Snackbar.make(constraintLayout, "Unarchived!",
+                                700).show();
+                    }
+                }
+            });
+        }
+    };
 
     private void getArchivedNotes(int requestCode, Boolean isNoteDeleted) {
         class GetArchiveNotesTask extends AsyncTask<Void,Void,List<Note>>{
@@ -120,6 +196,13 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
         getArchiveNotesTask.execute();
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent =new Intent();
+        intent.putExtra("flagUnarchive",flag);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
     @Override
     public void finish() {
         super.finish();
