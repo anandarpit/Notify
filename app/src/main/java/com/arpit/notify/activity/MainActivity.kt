@@ -165,37 +165,28 @@ class MainActivity : AppCompatActivity(), NotesListeners {
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     pos = viewHolder.adapterPosition
                     archiveNote = myList.get(pos)
-                        myList.removeAt(pos)
-                        noteAdapter.notifyDataSetChanged()
+                    myList.removeAt(pos)
+                    noteAdapter.notifyDataSetChanged()
 
-                        val snackbar = Snackbar.make(mainactivity, "Archiving...",
-                                1800).setAction("CANCEL") {
+                    val archiveNoteAsync = ArchiveNoteAsync(applicationContext, archiveNote)
+                    archiveNoteAsync.execute()
 
-                            if(pos!=-1){
-                                myList.add(pos, archiveNote!!)
-                                noteAdapter.notifyItemInserted(pos)
-                                val unarchiveNoteAsync = UnArchiveNoteAsync(applicationContext, archiveNote)
-                                unarchiveNoteAsync.execute()
-                            }
+                    val snackbar = Snackbar.make(mainactivity, "Archived!",
+                            1800).setAction("UNDO") {
+
+                        if(pos!=-1){
+                            myList.add(pos, archiveNote!!)
+                            noteAdapter.notifyItemInserted(pos)
+                            val unarchiveNoteAsync = UnArchiveNoteAsync(applicationContext, archiveNote)
+                            unarchiveNoteAsync.execute()
                         }
-                        snackbar.setActionTextColor(Color.RED)
-                        val snackbarView = snackbar.view
-                        snackbarView.setBackgroundColor(Color.parseColor("#333333"))
-                        snackbar.show()
-                        snackbar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-
-                            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                                super.onDismissed(transientBottomBar, event)
-                                if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
-                                    val archiveNoteAsync = ArchiveNoteAsync(applicationContext, archiveNote)
-                                    archiveNoteAsync.execute()
-                                    val snackbar = Snackbar.make(mainactivity, "Archived!",
-                                            700).show()
-                                }
-                            }
-                        })
+                    }
+                    snackbar.setActionTextColor(Color.RED)
+                    val snackbarView = snackbar.view
+                    snackbarView.setBackgroundColor(Color.parseColor("#333333"))
+                    snackbar.show()
                 }
-    }
+            }
 
 
 
@@ -210,19 +201,19 @@ class MainActivity : AppCompatActivity(), NotesListeners {
             override fun onPostExecute(rawResult: List<Note>?) {
                 super.onPostExecute(rawResult)
                 var result = ArrayList<Note>()
+                result.clear()
                 for (not in rawResult!!) {
                     if(not.arch != null) {
                         if (!not.arch) {
                             result.add(not)
-                            Log.d("xx", not.toString())
                         }
                     }
                     else if(not.arch == null){
                         result.add(not)
-                        Log.d("xx", not.toString())
                     }
                 }
                 if(requestCode == REQUEST_CODE_SHOW_NOTES){
+                    myList.clear()
                     myList.addAll(result)
                     noteAdapter.notifyDataSetChanged()
                     recyclerView.smoothScrollToPosition(0)
@@ -242,7 +233,7 @@ class MainActivity : AppCompatActivity(), NotesListeners {
                     else{
                         Log.d("xxxx", noteClickedPosition.toString())
                         myList.add(noteClickedPosition, result.get(noteClickedPosition))
-                        noteAdapter.notifyItemChanged(noteClickedPosition)
+                        noteAdapter.notifyDataSetChanged()
                         recyclerView.smoothScrollToPosition(noteClickedPosition)
                     }
                 }
@@ -256,19 +247,19 @@ class MainActivity : AppCompatActivity(), NotesListeners {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-            if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ADD_NOTE) {
-                getNote(REQUEST_CODE_ADD_NOTE, false)
-            } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_NOTE) {
-                if (data != null) {
-                    getNote(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted", false))
-                }
-            }else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_UNARCHIVED_NOTE){
-                if(data != null){
-                    if(data.getIntExtra("flagUnarchive",0) == 1){
-                        getNote(REQUEST_CODE_SHOW_NOTES,false)
-                    }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ADD_NOTE) {
+            getNote(REQUEST_CODE_ADD_NOTE, false)
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_NOTE) {
+            if (data != null) {
+                getNote(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted", false))
+            }
+        }else if(resultCode == RESULT_OK && requestCode == REQUEST_CODE_UNARCHIVED_NOTE){
+            if(data != null){
+                if(data.getIntExtra("flagUnarchive",0) == 1){
+                    getNote(REQUEST_CODE_SHOW_NOTES,false)
                 }
             }
+        }
 
     }
 

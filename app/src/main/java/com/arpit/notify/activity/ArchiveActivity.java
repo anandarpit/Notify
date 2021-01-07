@@ -100,7 +100,7 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
         @Override
         public float getSwipeEscapeVelocity(float defaultValue) {return 50000f;}
         @Override
-        public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {return 0.6f;}
+        public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {return 0.5f;}
 
         @Override
         public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
@@ -115,9 +115,12 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
             unArchiveNote = myList.get(pos);
             myList.remove(pos);
             noteAdapter.notifyDataSetChanged();
+            UnArchiveNoteAsync unArchiveNoteAsync = new UnArchiveNoteAsync(getApplicationContext(),unArchiveNote);
+            unArchiveNoteAsync.execute();
+            flag = 1;
 
-            Snackbar snack = Snackbar.make(constraintLayout, "Removing from Archives...", 1800 )
-                    .setAction("CANCEL", view -> {
+            Snackbar snack = Snackbar.make(constraintLayout, "Removed!", 1800 )
+                    .setAction("UNDO", view -> {
                         if(pos!=-1){
                             myList.add(pos, unArchiveNote);
                             noteAdapter.notifyItemInserted(pos);
@@ -129,20 +132,6 @@ public class ArchiveActivity extends AppCompatActivity implements NotesListeners
             View view = snack.getView();
             view.setBackgroundColor(Color.parseColor("#333333"));
             snack.show();
-            snack.addCallback(new Snackbar.Callback() {
-
-                @Override
-                public void onDismissed(Snackbar snackbar, int event) {
-                    if (event == Snackbar.Callback.DISMISS_EVENT_TIMEOUT) {
-
-                        UnArchiveNoteAsync unArchiveNoteAsync = new UnArchiveNoteAsync(getApplicationContext(),unArchiveNote);
-                        unArchiveNoteAsync.execute();
-                        flag = 1;
-                        Snackbar.make(constraintLayout, "Unarchived!",
-                                700).show();
-                    }
-                }
-            });
         }
     };
 

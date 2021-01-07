@@ -84,14 +84,23 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
 
         public void bind(Note note)
         {
-            textTitle.setText(note.getTitle());
             textDate.setText(note.getDateTime());
 
-            if(note.getSubtitle().isEmpty()){
-                textSubtitle.setVisibility(View.GONE);
+            if( note.getTitle() != null) {
+                if (note.getTitle().isEmpty()) {
+                    textTitle.setVisibility(View.GONE);
+                } else {
+                    textTitle.setText(note.getTitle());
+                }
             }
-            else{
-                textSubtitle.setText(note.getSubtitle());
+
+            if( note.getSubtitle() != null){
+                if(note.getSubtitle().isEmpty()){
+                    textSubtitle.setVisibility(View.GONE);
+                }
+                 else{
+                    textSubtitle.setText(note.getSubtitle());
+                }
             }
 
             GradientDrawable gradientDrawable = (GradientDrawable) layoutContainer.getBackground();
@@ -134,7 +143,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
                 }
                 new Handler(Looper.getMainLooper()).post(() -> notifyDataSetChanged());
             }
-        } ,10);
+        } ,50);
     }
     public void cancelTimer(){
         if(timer != null){

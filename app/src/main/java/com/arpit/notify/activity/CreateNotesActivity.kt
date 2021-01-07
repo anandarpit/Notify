@@ -167,9 +167,9 @@ class CreateNotesActivity : AppCompatActivity() {
             if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED){
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
-                else{
+            else{
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        }
+            }
         }
 
         tick_one.setOnClickListener{
@@ -177,16 +177,16 @@ class CreateNotesActivity : AppCompatActivity() {
         }
 
         tick_two.setOnClickListener{
-           two()
+            two()
         }
         tick_three.setOnClickListener{
-           three()
+            three()
         }
         tick_four.setOnClickListener{
             four()
         }
         tick_five.setOnClickListener{
-           five()
+            five()
         }
 
 
@@ -200,14 +200,14 @@ class CreateNotesActivity : AppCompatActivity() {
                                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     val builder = AlertDialog.Builder(this)
                     builder.setMessage("Permission to access the gallery is required for this app to add image notes")
-                                    .setTitle("Permission required")
+                            .setTitle("Permission required")
 
-                                    builder.setPositiveButton("OK"
-                                    ) { dialog, id ->
-                                makeRequest()
-                            }
+                    builder.setPositiveButton("OK"
+                    ) { dialog, id ->
+                        makeRequest()
+                    }
 
-                            val dialog = builder.create()
+                    val dialog = builder.create()
                     dialog.show()
                 } else {
                     makeRequest()
