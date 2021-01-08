@@ -24,7 +24,6 @@ import com.arpit.notify.asyncTasks.UnArchiveNoteAsync
 import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
 import com.arpit.notify.listeners.NotesListeners
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*

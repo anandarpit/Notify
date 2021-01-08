@@ -1,5 +1,6 @@
 package com.arpit.notify.adapter;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,13 +119,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             }
 
             if(note.getImagePath() != null){
+                BitmapFactory.Options op= new BitmapFactory.Options();
 
-                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                Bitmap bitmap = BitmapFactory.decodeFile(note.getImagePath(),bmOptions);
+                Bitmap bitmap =BitmapFactory.decodeFile(note.getImagePath(),op);
 
                 noteImage.setImageBitmap(bitmap);
                 noteImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(note.getImagePath()).into(noteImage);
             }
             else{
                 noteImage.setVisibility(View.GONE);

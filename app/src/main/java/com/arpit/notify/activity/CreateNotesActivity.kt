@@ -57,7 +57,6 @@ class CreateNotesActivity : AppCompatActivity() {
     private val REQUEST_CODE_SELECT_IMAGE = 2
 
     var ide: Long? = null
-    val timer = Timer()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -386,7 +385,6 @@ class CreateNotesActivity : AppCompatActivity() {
                 REQUEST_GALLERY_CODE)
     }
 
-
     private fun saveNote() {
                 val database = NotesDatabase.getDatabase(applicationContext)
                 val Title = title_edit_text.text.toString()
@@ -491,9 +489,9 @@ class CreateNotesActivity : AppCompatActivity() {
         }
     }
 
-    fun Activity.hideKeyboard() {
-        hideKeyboard(currentFocus ?: View(this))
-    }
+//    fun Activity.hideKeyboard() {
+//        hideKeyboard(currentFocus ?: View(this))
+//    }
 
     private fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
