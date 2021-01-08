@@ -1,10 +1,13 @@
 package com.arpit.notify.adapter;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import com.arpit.notify.R;
 import com.arpit.notify.entities.Note;
 import com.arpit.notify.listeners.NotesListeners;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,8 +117,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             }
 
             if(note.getImagePath() != null){
-                noteImage.setImageBitmap(BitmapFactory.decodeFile(note.getImagePath()));
+
+                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                Bitmap bitmap = BitmapFactory.decodeFile(note.getImagePath(),bmOptions);
+
+                noteImage.setImageBitmap(bitmap);
                 noteImage.setVisibility(View.VISIBLE);
+                Picasso.get().load(note.getImagePath()).into(noteImage);
             }
             else{
                 noteImage.setVisibility(View.GONE);

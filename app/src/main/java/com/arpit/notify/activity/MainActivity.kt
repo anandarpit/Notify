@@ -10,7 +10,6 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.MenuInflater
 import android.view.View
 import android.widget.PopupMenu
@@ -50,6 +49,7 @@ class MainActivity : AppCompatActivity(), NotesListeners {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        getNote(REQUEST_CODE_SHOW_NOTES, false)
 
         add_note.setOnClickListener{
             val intent = Intent(this, CreateNotesActivity::class.java)
@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity(), NotesListeners {
         recyclerView.layoutManager = layoutmanager
         noteAdapter = NoteAdapter(myList, this)
         recyclerView.adapter = noteAdapter
-        getNote(REQUEST_CODE_SHOW_NOTES, false)
 
         searchNote.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -228,10 +227,8 @@ class MainActivity : AppCompatActivity(), NotesListeners {
 
                     if(isNoteDeleted){
                         noteAdapter.notifyDataSetChanged()
-                        Log.d("xxxx", noteClickedPosition.toString())
                     }
                     else{
-                        Log.d("xxxx", noteClickedPosition.toString())
                         myList.add(noteClickedPosition, result.get(noteClickedPosition))
                         noteAdapter.notifyDataSetChanged()
                         recyclerView.smoothScrollToPosition(noteClickedPosition)

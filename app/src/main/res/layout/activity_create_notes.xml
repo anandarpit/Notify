@@ -53,54 +53,7 @@
                 app:layout_constraintStart_toEndOf="@+id/goback"
                 app:layout_constraintTop_toTopOf="@+id/goback" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/progress_lottie"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/archiveTag"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/archiveTag"
-                app:layout_constraintTop_toTopOf="@+id/archiveTag"
-                app:layout_constraintVertical_bias="0.5"
-                app:layout_constraintHorizontal_bias="1"
-                android:layout_marginRight="@dimen/_20sdp"
-                android:layout_marginLeft="@dimen/_20sdp"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/progress_blue_indicator" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/progress_tick_lottie"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/archiveTag"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/archiveTag"
-                app:layout_constraintTop_toTopOf="@+id/archiveTag"
-                app:layout_constraintVertical_bias="0.5"
-                app:layout_constraintHorizontal_bias="1"
-                android:layout_marginRight="@dimen/_15sdp"
-                android:layout_marginLeft="@dimen/_15sdp"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="false"
-                app:lottie_rawRes="@raw/progress_blue_tick" />
-
-
-            <ImageView
-                android:id="@+id/done"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:background="@drawable/background_done"
-                android:padding="@dimen/_6sdp"
-                android:src="@drawable/ic_baseline_done"
-                app:layout_constraintBottom_toBottomOf="@id/goback"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.897"
-                app:layout_constraintStart_toEndOf="@+id/goback"
-                app:layout_constraintTop_toTopOf="@+id/goback"
-                app:layout_constraintVertical_bias="1.0" />
 
             <EditText
                 android:id="@+id/title_edit_text"
@@ -168,9 +121,11 @@
                 android:id="@+id/image_on_create"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxHeight="@dimen/_400sdp"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_15sdp"
                 android:visibility="gone"
+                android:adjustViewBounds="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/subtitle_edit_text" />

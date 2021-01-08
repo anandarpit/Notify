@@ -19,7 +19,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
@@ -55,15 +56,15 @@ class CreateNotesActivity : AppCompatActivity() {
     private val REQUEST_GALLERY_CODE = 1
     private val REQUEST_CODE_SELECT_IMAGE = 2
 
+    var ide: Long? = null
+    val timer = Timer()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_notes)
 
         datetime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
-
-        done.setOnClickListener{
-            saveNote()
-        }
 
         initMiscellaneou()
 
@@ -74,6 +75,7 @@ class CreateNotesActivity : AppCompatActivity() {
 
         if(intent.getBooleanExtra("isViewOrUpdate", false)){
             viewOrOpenedNote = intent.getSerializableExtra("note") as Note?
+            ide = viewOrOpenedNote?.id?.toLong()
             setVieworUpdateNote(viewOrOpenedNote)
         }
         if(intent.getBooleanExtra("fromArchive", false)){
@@ -81,8 +83,6 @@ class CreateNotesActivity : AppCompatActivity() {
         }
 
         if(viewOrOpenedNote != null && viewOrOpenedNote!!.getColor() != null){
-            Log.d("ArpitAnand",viewOrOpenedNote!!.getColor())
-
             if(viewOrOpenedNote!!.getColor().equals("#4CAF50")){
                 five()
             }
@@ -104,7 +104,6 @@ class CreateNotesActivity : AppCompatActivity() {
             textwebUrl.setText("")
             url_link.visibility = View.GONE
         }
-
         delete_button_for_image.setOnClickListener{
             selectedImagePath=""
             image_on_create.setImageBitmap(null)
@@ -122,6 +121,57 @@ class CreateNotesActivity : AppCompatActivity() {
         goback.setOnClickListener {
             finish()
         }
+
+        title_edit_text.addTextChangedListener((object : TextWatcher {
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                ing progress_lottie.visibility = View.VISIBLE
+//                progress_lottie.playAnimation()
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+//                cancelTimer()
+                saveNote()
+            }
+
+        }))
+
+        subtitle_edit_text.addTextChangedListener((object : TextWatcher {
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                cancelTimer()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+//                cancelTimer()
+                saveNote()
+            }
+
+        }))
+
+        note_text.addTextChangedListener((object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                cancelTimer()
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+//                cancelTimer()
+                saveNote()
+            }
+
+        }))
+
+
     }
 
     private fun setVieworUpdateNote(noteAllready: Note?) {
@@ -146,12 +196,10 @@ class CreateNotesActivity : AppCompatActivity() {
 
 
     }
-
     private fun setSubTitleIndicatorColor() {
         val gradientDrawable:GradientDrawable  = view.background as GradientDrawable
         gradientDrawable.setColor(Color.parseColor(selectedNoteColor))
     }
-
     private fun initMiscellaneou() {
 
 
@@ -167,26 +215,25 @@ class CreateNotesActivity : AppCompatActivity() {
             if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED){
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
-            else{
+                else{
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
+        }
         }
 
         tick_one.setOnClickListener{
             one()
         }
-
         tick_two.setOnClickListener{
-            two()
+           two()
         }
         tick_three.setOnClickListener{
-            three()
+           three()
         }
         tick_four.setOnClickListener{
             four()
         }
         tick_five.setOnClickListener{
-            five()
+           five()
         }
 
 
@@ -200,14 +247,14 @@ class CreateNotesActivity : AppCompatActivity() {
                                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     val builder = AlertDialog.Builder(this)
                     builder.setMessage("Permission to access the gallery is required for this app to add image notes")
-                            .setTitle("Permission required")
+                                    .setTitle("Permission required")
 
-                    builder.setPositiveButton("OK"
-                    ) { dialog, id ->
-                        makeRequest()
-                    }
+                                    builder.setPositiveButton("OK"
+                                    ) { dialog, id ->
+                                makeRequest()
+                            }
 
-                    val dialog = builder.create()
+                            val dialog = builder.create()
                     dialog.show()
                 } else {
                     makeRequest()
@@ -217,8 +264,8 @@ class CreateNotesActivity : AppCompatActivity() {
                 addImage()
             }
         }
-
     }
+
 
     private fun deleteDialog() {
         val inflater = layoutInflater
@@ -242,7 +289,7 @@ class CreateNotesActivity : AppCompatActivity() {
                     super.onPostExecute(result)
                     Handler(Looper.getMainLooper()).postDelayed({
                         val intent = Intent()
-                        intent.putExtra("isNoteDeleted",true)
+                        intent.putExtra("isNoteDeleted", true)
                         setResult(RESULT_OK, intent)
                         finish()
                     }, 300)
@@ -265,8 +312,8 @@ class CreateNotesActivity : AppCompatActivity() {
         tick_four.setImageResource(0)
         tick_five.setImageResource(R.drawable.ic_single_done)
         setSubTitleIndicatorColor()
+        saveNote()
     }
-
     private fun four() {
         selectedNoteColor = "#3A52Fc"
 
@@ -276,8 +323,8 @@ class CreateNotesActivity : AppCompatActivity() {
         tick_four.setImageResource(R.drawable.ic_single_done)
         tick_five.setImageResource(0)
         setSubTitleIndicatorColor()
+        saveNote()
     }
-
     private fun three() {
         selectedNoteColor = "#FF4842"
 
@@ -287,8 +334,8 @@ class CreateNotesActivity : AppCompatActivity() {
         tick_four.setImageResource(0)
         tick_five.setImageResource(0)
         setSubTitleIndicatorColor()
+        saveNote()
     }
-
     private fun two() {
         selectedNoteColor = "#FDBE3B"
 
@@ -298,8 +345,8 @@ class CreateNotesActivity : AppCompatActivity() {
         tick_four.setImageResource(0)
         tick_five.setImageResource(0)
         setSubTitleIndicatorColor()
+        saveNote()
     }
-
     private fun one() {
         selectedNoteColor = "#333333"
 
@@ -309,6 +356,7 @@ class CreateNotesActivity : AppCompatActivity() {
         tick_four.setImageResource(0)
         tick_five.setImageResource(0)
         setSubTitleIndicatorColor()
+        saveNote()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -338,20 +386,16 @@ class CreateNotesActivity : AppCompatActivity() {
                 REQUEST_GALLERY_CODE)
     }
 
+
     private fun saveNote() {
-        val Title = title_edit_text.text.toString()
-        val notes = note_text.text.toString()
-        val subtitle = subtitle_edit_text.text.toString()
-        when {
-            Title.isEmpty() -> {
-                view.snack("Title cannot be empty!")
-                return
-            }
-            notes.isEmpty() -> {
-                view.snack("Notes Cannot be Empty")
-                return
-            }
-            else -> {
+                val database = NotesDatabase.getDatabase(applicationContext)
+                val Title = title_edit_text.text.toString()
+                val notes = note_text.text.toString()
+                val subtitle = subtitle_edit_text.text.toString()
+
+                if (Title.isEmpty() && notes.isEmpty() && subtitle.isEmpty()) {
+                    return
+                }
                 val note = Note()
                 note.setTitle(Title)
                 note.setSubtitle(subtitle)
@@ -360,40 +404,28 @@ class CreateNotesActivity : AppCompatActivity() {
                 note.setColor(selectedNoteColor)
                 note.setImagePath(selectedImagePath)
 
-                if(url_link.visibility == View.VISIBLE && !textwebUrl.text.toString().isEmpty()){
+                if (url_link.visibility == View.VISIBLE && !textwebUrl.text.toString().isEmpty()) {
                     note.setWebLink(textwebUrl.text.toString())
                 }
-                if(intent.getBooleanExtra("fromArchive", false)){
+                if (intent.getBooleanExtra("fromArchive", false)) {
                     note.setArch(true)
                 }
-
-                if(viewOrOpenedNote != null){
-                    note.setId(viewOrOpenedNote!!.getId())
+                if (ide != null) {
+                    note.setId(ide!!.toInt())
                 }
 
-                class SaveNotes: AsyncTask<Void, Void, Void>() {
+                    class SaveNotes : AsyncTask<Void, Void, Void>() {
+                        override fun doInBackground(vararg void: Void?): Void? {
+                            ide = database.noteDao().insertNote(note)
+                            return null
+                        }
 
-                    override fun doInBackground(vararg void: Void?): Void? {
-                        NotesDatabase.getDatabase(applicationContext).noteDao().insertNote(note)
-                        return null
+                        override fun onPostExecute(result: Void?) {
+                            super.onPostExecute(result)
+
+                        }
                     }
-
-                    override fun onPostExecute(result: Void?) {
-                        super.onPostExecute(result)
-                        hideKeyboard() // Hide the Keyboard
-
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            val intent = Intent()
-                            setResult(RESULT_OK, intent)
-                            finish()
-                        }, 500)
-
-                    }
-                }
-
-                SaveNotes().execute()
-            }
-        }
+                    SaveNotes().execute()
     }
 
     private fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
@@ -413,6 +445,7 @@ class CreateNotesActivity : AppCompatActivity() {
                         image_on_create.visibility = View.VISIBLE
                         delete_button_for_image.visibility = View.VISIBLE
                         selectedImagePath = getPathFromUri(selectImageUri)
+                        saveNote()
                     }
                     catch (e: Exception){
                         Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
@@ -458,14 +491,19 @@ class CreateNotesActivity : AppCompatActivity() {
         }
     }
 
-    //Three functions below are to hide the keyboard when done button is pressed
-
     fun Activity.hideKeyboard() {
         hideKeyboard(currentFocus ?: View(this))
     }
+
     private fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    override fun onBackPressed() {
+            val intent = Intent()
+            intent.putExtra("isNoteDeleted", false)
+            setResult(RESULT_OK, intent)
+            finish()
+    }
 }

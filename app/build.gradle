@@ -53,7 +53,7 @@ dependencies {
     //Rounded Image View
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
-    //lottie
-    implementation 'com.airbnb.android:lottie:3.5.0'
+    //picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }

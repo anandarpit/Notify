@@ -18,7 +18,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.arpit.notify.R;
 import com.arpit.notify.adapter.NoteAdapter;
 import com.arpit.notify.asyncTasks.ArchiveNoteAsync;
