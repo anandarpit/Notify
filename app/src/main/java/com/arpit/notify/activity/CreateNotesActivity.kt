@@ -9,16 +9,16 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
-import android.os.AsyncTask
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -39,6 +39,7 @@ import kotlinx.android.synthetic.main.layout_add_url.view.editText
 import kotlinx.android.synthetic.main.layout_delete.view.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.view.*
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,6 +58,7 @@ class CreateNotesActivity : AppCompatActivity() {
     private val REQUEST_CODE_SELECT_IMAGE = 2
 
     var ide: Long? = null
+    lateinit var fileName: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -437,12 +439,67 @@ class CreateNotesActivity : AppCompatActivity() {
                 val selectImageUri: Uri? = data.data
                 if(selectImageUri!=null){
                     try {
-                        val inputStream = contentResolver.openInputStream(selectImageUri)
-                        val bitmap = BitmapFactory.decodeStream(inputStream)
+
+                        val name: String = getFileName(selectImageUri)
+                        var bitmap: Bitmap? = null
+                        try {
+                           val inputStream = contentResolver.openInputStream(selectImageUri)
+                            bitmap = BitmapFactory.decodeStream(inputStream)
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        }
+
+
                         image_on_create.setImageBitmap(bitmap)
+
+
+
+
+                        val finalBitmap = bitmap
+                        val thread: Thread = object : Thread() {
+                            override fun run() {
+                                super.run()
+                                try {
+                                    selectedImagePath = getExternalFilesDir("Feather Notes")!!.absolutePath + File.separator + name
+                                    val file = File(selectedImagePath)
+                                    val fOut = FileOutputStream(file)
+                                    val out = ByteArrayOutputStream()
+                                    finalBitmap!!.compress(CompressFormat.JPEG, 100, out)
+                                    out.writeTo(fOut)
+                                    fOut.flush()
+                                    fOut.close()
+                                } catch (e: IOException) {
+                                    e.printStackTrace()
+                                }
+                            }
+                        }
+                        thread.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         image_on_create.visibility = View.VISIBLE
                         delete_button_for_image.visibility = View.VISIBLE
-                        selectedImagePath = getPathFromUri(selectImageUri)
                         saveNote()
                     }
                     catch (e: Exception){
@@ -452,6 +509,7 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun getPathFromUri(contentUri: Uri): String {
         val filePath: String
@@ -489,10 +547,6 @@ class CreateNotesActivity : AppCompatActivity() {
         }
     }
 
-//    fun Activity.hideKeyboard() {
-//        hideKeyboard(currentFocus ?: View(this))
-//    }
-
     private fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
@@ -504,4 +558,27 @@ class CreateNotesActivity : AppCompatActivity() {
             setResult(RESULT_OK, intent)
             finish()
     }
+
+    fun getFileName(uri: Uri): String {
+        var result: String? = null
+        if (uri.scheme == "content") {
+            val cursor = contentResolver.query(uri, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor!!.close()
+            }
+        }
+        if (result == null) {
+            result = uri.path
+            val cut = result!!.lastIndexOf('/')
+            if (cut != -1) {
+                result = result.substring(cut + 1)
+            }
+        }
+        return result
+    }
 }
+

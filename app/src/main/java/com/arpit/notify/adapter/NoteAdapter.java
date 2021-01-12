@@ -119,12 +119,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
             }
 
             if(note.getImagePath() != null){
-                BitmapFactory.Options op= new BitmapFactory.Options();
+                try {
+                    BitmapFactory.Options op = new BitmapFactory.Options();
+                    Bitmap bitmap = BitmapFactory.decodeFile(note.getImagePath(), op);
 
-                Bitmap bitmap =BitmapFactory.decodeFile(note.getImagePath(),op);
-
-                noteImage.setImageBitmap(bitmap);
-                noteImage.setVisibility(View.VISIBLE);
+                    noteImage.setImageBitmap(bitmap);
+                    noteImage.setVisibility(View.VISIBLE);
+                }catch(Exception e){
+                    Log.d("Exceptions", e.getMessage());
+                }
             }
             else{
                 noteImage.setVisibility(View.GONE);
