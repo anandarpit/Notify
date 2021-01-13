@@ -9,8 +9,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -33,12 +31,18 @@ import com.arpit.notify.database.NotesDatabase
 import com.arpit.notify.entities.Note
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.default
+import id.zelory.compressor.constraint.destination
 import kotlinx.android.synthetic.main.activity_create_notes.*
 import kotlinx.android.synthetic.main.layout_add_url.view.*
 import kotlinx.android.synthetic.main.layout_add_url.view.editText
 import kotlinx.android.synthetic.main.layout_delete.view.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.*
 import kotlinx.android.synthetic.main.layout_miscellaneous.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -53,6 +57,8 @@ class CreateNotesActivity : AppCompatActivity() {
     private var viewOrOpenedNote: Note? = null
 
     private var dialogAddUrl: AlertDialog? = null
+
+    private val ioScope = CoroutineScope(Dispatchers.IO)
 
     private val REQUEST_GALLERY_CODE = 1
     private val REQUEST_CODE_SELECT_IMAGE = 2
@@ -104,12 +110,15 @@ class CreateNotesActivity : AppCompatActivity() {
         delete_button_for_url.setOnClickListener{
             textwebUrl.setText("")
             url_link.visibility = View.GONE
+            saveNote()
+
         }
         delete_button_for_image.setOnClickListener{
             selectedImagePath=""
             image_on_create.setImageBitmap(null)
             image_on_create.visibility = View.GONE
             delete_button_for_image.visibility = View.GONE
+            saveNote()
         }
 
         if(viewOrOpenedNote != null){
@@ -441,66 +450,28 @@ class CreateNotesActivity : AppCompatActivity() {
                     try {
 
                         val name: String = getFileName(selectImageUri)
-                        var bitmap: Bitmap? = null
-                        try {
-                           val inputStream = contentResolver.openInputStream(selectImageUri)
-                            bitmap = BitmapFactory.decodeStream(inputStream)
-                        } catch (e: FileNotFoundException) {
-                            e.printStackTrace()
-                        }
+                        val filepath = getPathFromUri(selectImageUri)
 
+                        ioScope.launch {
+                            selectedImagePath = getExternalFilesDir("Feather Notes")!!.absolutePath + File.separator + name
+                            val destinationfile = File(selectedImagePath)
 
-                        image_on_create.setImageBitmap(bitmap)
+                            var compressedImageFile = Compressor.compress(this@CreateNotesActivity, File(filepath)) {
+                                default()
+                                destination(destinationfile)
+                            }
+                            val finalBitmap = BitmapFactory.decodeFile(compressedImageFile.path)
 
-
-
-
-                        val finalBitmap = bitmap
-                        val thread: Thread = object : Thread() {
-                            override fun run() {
-                                super.run()
-                                try {
-                                    selectedImagePath = getExternalFilesDir("Feather Notes")!!.absolutePath + File.separator + name
-                                    val file = File(selectedImagePath)
-                                    val fOut = FileOutputStream(file)
-                                    val out = ByteArrayOutputStream()
-                                    finalBitmap!!.compress(CompressFormat.JPEG, 100, out)
-                                    out.writeTo(fOut)
-                                    fOut.flush()
-                                    fOut.close()
-                                } catch (e: IOException) {
-                                    e.printStackTrace()
-                                }
+                            runOnUiThread {
+                                image_on_create.setImageBitmap(finalBitmap)
+                                image_on_create.visibility = View.VISIBLE
+                                delete_button_for_image.visibility = View.VISIBLE
+                                saveNote()
                             }
                         }
-                        thread.start()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        image_on_create.visibility = View.VISIBLE
-                        delete_button_for_image.visibility = View.VISIBLE
-                        saveNote()
                     }
                     catch (e: Exception){
                         Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
@@ -540,6 +511,7 @@ class CreateNotesActivity : AppCompatActivity() {
                 url_link.visibility = View.VISIBLE
                 textwebUrl.setText(view.editText.text.toString())
                 infoDialog.dismiss()
+                saveNote()
             }
             view.cancelNo.setOnClickListener {
                 infoDialog.dismiss()
@@ -579,6 +551,15 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
         return result
-    }
+    }  //gets the file name of the selected image
+
+//    @Throws(IOException::class)      //Use this if problem in Android 10 latest
+//    private fun getBitmapFromUri(uri: Uri): Bitmap? {
+//        val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+//        val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
+//        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+//        parcelFileDescriptor.close()
+//        return image
+//    }
 }
 

@@ -23,7 +23,6 @@ import com.arpit.notify.R;
 import com.arpit.notify.entities.Note;
 import com.arpit.notify.listeners.NotesListeners;
 import com.makeramen.roundedimageview.RoundedImageView;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +65,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.myAdapter> {
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        return 0;
     }
 
 

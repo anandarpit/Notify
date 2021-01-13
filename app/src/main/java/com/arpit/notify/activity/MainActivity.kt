@@ -122,9 +122,9 @@ class MainActivity : AppCompatActivity(), NotesListeners {
                 override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float { return 0.6f }
 
                 override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-//                    val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
-//                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-                    val dragFlags = 0
+                    val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
+                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+//                    val dragFlags = 0
                     val swipeFlags = ItemTouchHelper.START or ItemTouchHelper.END
                     return makeMovementFlags(dragFlags, swipeFlags)
                 }
