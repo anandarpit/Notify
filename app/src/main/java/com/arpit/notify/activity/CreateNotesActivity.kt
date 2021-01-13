@@ -19,6 +19,7 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
@@ -60,12 +61,13 @@ class CreateNotesActivity : AppCompatActivity() {
 
     private val ioScope = CoroutineScope(Dispatchers.IO)
 
+    var flag: Int = 0
+    var wasInitiallyEmpty: Boolean = false
+
     private val REQUEST_GALLERY_CODE = 1
     private val REQUEST_CODE_SELECT_IMAGE = 2
 
     var ide: Long? = null
-    lateinit var fileName: String
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,8 +182,12 @@ class CreateNotesActivity : AppCompatActivity() {
             }
 
         }))
-
-
+        val Title = title_edit_text.text.toString()
+        val notes = note_text.text.toString()
+        val subtitle = subtitle_edit_text.text.toString()
+        if (Title.isEmpty() && notes.isEmpty() && subtitle.isEmpty() && url_link.visibility == View.GONE && selectedImagePath.isEmpty()){
+            wasInitiallyEmpty = true
+        }
     }
 
     private fun setVieworUpdateNote(noteAllready: Note?) {
@@ -210,6 +216,7 @@ class CreateNotesActivity : AppCompatActivity() {
         val gradientDrawable:GradientDrawable  = view.background as GradientDrawable
         gradientDrawable.setColor(Color.parseColor(selectedNoteColor))
     }
+
     private fun initMiscellaneou() {
 
 
@@ -275,7 +282,6 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun deleteDialog() {
         val inflater = layoutInflater
@@ -397,12 +403,14 @@ class CreateNotesActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
+        Log.d("sxxs", "SaveNotes called")
+        flag = 1
                 val database = NotesDatabase.getDatabase(applicationContext)
                 val Title = title_edit_text.text.toString()
                 val notes = note_text.text.toString()
                 val subtitle = subtitle_edit_text.text.toString()
 
-                if (Title.isEmpty() && notes.isEmpty() && subtitle.isEmpty()) {
+                if (Title.isEmpty() && notes.isEmpty() && subtitle.isEmpty() && selectedImagePath.isEmpty() && url_link.visibility == View.GONE) {
                     return
                 }
                 val note = Note()
@@ -427,11 +435,6 @@ class CreateNotesActivity : AppCompatActivity() {
                         override fun doInBackground(vararg void: Void?): Void? {
                             ide = database.noteDao().insertNote(note)
                             return null
-                        }
-
-                        override fun onPostExecute(result: Void?) {
-                            super.onPostExecute(result)
-
                         }
                     }
                     SaveNotes().execute()
@@ -469,9 +472,6 @@ class CreateNotesActivity : AppCompatActivity() {
                                 saveNote()
                             }
                         }
-
-
-
                     }
                     catch (e: Exception){
                         Toast.makeText(applicationContext, e.message, Toast.LENGTH_LONG).show()
@@ -480,7 +480,6 @@ class CreateNotesActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun getPathFromUri(contentUri: Uri): String {
         val filePath: String
@@ -510,8 +509,8 @@ class CreateNotesActivity : AppCompatActivity() {
             view.addYes.setOnClickListener {
                 url_link.visibility = View.VISIBLE
                 textwebUrl.setText(view.editText.text.toString())
-                infoDialog.dismiss()
                 saveNote()
+                infoDialog.dismiss()
             }
             view.cancelNo.setOnClickListener {
                 infoDialog.dismiss()
@@ -519,18 +518,53 @@ class CreateNotesActivity : AppCompatActivity() {
         }
     }
 
-    private fun Context.hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
     override fun onBackPressed() {
+
+        val Title = title_edit_text.text.toString()
+        val notes = note_text.text.toString()
+        val subtitle = subtitle_edit_text.text.toString()
+
+        if (Title.isEmpty() && notes.isEmpty() && subtitle.isEmpty() && url_link.visibility == View.GONE  && selectedImagePath.isEmpty()) {
+            if(flag == 1) {
+                class DeleteNoteTask : AsyncTask<Void, Void, Void>() {
+
+                    override fun doInBackground(vararg void: Void?): Void? {
+                        val note = Note()
+                        note.setId(ide!!.toInt())
+                        NotesDatabase.getDatabase(applicationContext).noteDao().delete(note)
+                        return null
+                    }
+
+                    override fun onPostExecute(result: Void?) {
+                        super.onPostExecute(result)
+                        if (wasInitiallyEmpty) {
+                            finish()
+                        }
+                        if (!wasInitiallyEmpty) {
+                            val intent = Intent()
+                            intent.putExtra("isNoteDeleted", true)
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }
+                    }
+                }
+                DeleteNoteTask().execute()
+            }
+            if(flag == 0){
+                finish()
+            }
+        }
+        else {
+            Log.d("sxxs", "back from else pressed")
             val intent = Intent()
             intent.putExtra("isNoteDeleted", false)
+            intent.putExtra("FlagReceived", flag)
             setResult(RESULT_OK, intent)
             finish()
+        }
     }
 
+    @SuppressLint("Recycle")
     fun getFileName(uri: Uri): String {
         var result: String? = null
         if (uri.scheme == "content") {
@@ -552,14 +586,4 @@ class CreateNotesActivity : AppCompatActivity() {
         }
         return result
     }  //gets the file name of the selected image
-
-//    @Throws(IOException::class)      //Use this if problem in Android 10 latest
-//    private fun getBitmapFromUri(uri: Uri): Bitmap? {
-//        val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
-//        val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
-//        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
-//        parcelFileDescriptor.close()
-//        return image
-//    }
 }
-

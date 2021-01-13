@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity(), NotesListeners {
     var pos = -1
     var archiveNote: Note? = null
 
+    var flag: Int = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -97,12 +99,12 @@ class MainActivity : AppCompatActivity(), NotesListeners {
                     startActivityForResult(intent, REQUEST_CODE_UNARCHIVED_NOTE)
                     overridePendingTransition(0, 0)
                 }
-                R.id.backup -> {
-
-                }
-                R.id.importnotes -> {
-
-                }
+//                R.id.backup -> {
+//
+//                }
+//                R.id.importnotes -> {
+//
+//                }
             }
             true
         }
@@ -122,9 +124,9 @@ class MainActivity : AppCompatActivity(), NotesListeners {
                 override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float { return 0.6f }
 
                 override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                    val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
-                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-//                    val dragFlags = 0
+//                    val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
+//                            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+                    val dragFlags = 0
                     val swipeFlags = ItemTouchHelper.START or ItemTouchHelper.END
                     return makeMovementFlags(dragFlags, swipeFlags)
                 }
@@ -217,9 +219,11 @@ class MainActivity : AppCompatActivity(), NotesListeners {
                     recyclerView.smoothScrollToPosition(0)
                 }
                 else if(requestCode==REQUEST_CODE_ADD_NOTE){
-                    myList.add(0, result.get(0))
-                    noteAdapter.notifyItemInserted(0)
-                    recyclerView.smoothScrollToPosition(0)
+                    if(flag == 1) {
+                        myList.add(0, result.get(0))
+                        noteAdapter.notifyItemInserted(0)
+                        recyclerView.smoothScrollToPosition(0)
+                    }
                 }
                 else if(requestCode == REQUEST_CODE_UPDATE_NOTE){
                     myList.removeAt(noteClickedPosition)
@@ -244,7 +248,16 @@ class MainActivity : AppCompatActivity(), NotesListeners {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ADD_NOTE) {
-            getNote(REQUEST_CODE_ADD_NOTE, false)
+            if (data != null) {
+                if(data.getIntExtra("FlagReceived",-1) == 1){
+                    flag = 1
+                    getNote(REQUEST_CODE_ADD_NOTE, false)
+                }
+                if(data.getIntExtra("FlagReceived",-1) == 0) {
+                    flag = 0
+                    getNote(REQUEST_CODE_ADD_NOTE, false)
+                }
+            }
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_NOTE) {
             if (data != null) {
                 getNote(REQUEST_CODE_UPDATE_NOTE, data.getBooleanExtra("isNoteDeleted", false))
@@ -271,5 +284,4 @@ class MainActivity : AppCompatActivity(), NotesListeners {
     override fun onNoteLongedClicked(note: Note?, position: Int) {
         //Let it be empty
     }
-
 }

@@ -78,63 +78,67 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
+        android:paddingBottom="@dimen/_5sdp"
         android:paddingHorizontal="@dimen/_5sdp"
         android:layout_marginTop="@dimen/_8sdp"
         app:layout_constraintVertical_bias="0"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#2F2D2E"
-        android:orientation="horizontal"
-        android:paddingVertical="@dimen/_3sdp"
-        android:paddingStart="@dimen/_10sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="RtlSymmetry">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/linearLayout2"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="#2F2D2E"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:paddingVertical="@dimen/_3sdp"-->
+<!--        android:paddingStart="@dimen/_10sdp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        tools:ignore="RtlSymmetry">-->
 
-        <ImageView
-            android:id="@+id/voice_note"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:padding="@dimen/_5sdp"
-            android:layout_gravity="center"
-            android:background="@drawable/background_add_voice_note"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:contentDescription="@string/voice_note"
-            android:src="@drawable/ic_voice_note"/>
+<!--&lt;!&ndash;        <ImageView&ndash;&gt;-->
+<!--&lt;!&ndash;            android:id="@+id/voice_note"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_width="@dimen/_30sdp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_height="@dimen/_30sdp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:padding="@dimen/_5sdp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_gravity="center"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:background="@drawable/background_add_voice_note"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:layout_marginHorizontal="@dimen/_10sdp"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:contentDescription="@string/voice_note"&ndash;&gt;-->
+<!--&lt;!&ndash;            android:src="@drawable/ic_voice_note"/>&ndash;&gt;-->
 
-        <ImageView
-            android:layout_width="@dimen/_23sdp"
-            android:layout_height="@dimen/_23sdp"
-            android:layout_marginHorizontal="@dimen/_5sdp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/add_imagee"
-            android:layout_marginVertical="@dimen/_9sdp"
-            android:src="@drawable/ic_baseline_photo" />
+<!--        <ImageView-->
+<!--            android:layout_width="@dimen/_23sdp"-->
+<!--            android:layout_height="@dimen/_23sdp"-->
+<!--            android:layout_marginHorizontal="@dimen/_5sdp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:contentDescription="@string/add_imagee"-->
+<!--            android:layout_marginVertical="@dimen/_9sdp"-->
+<!--            android:src="@drawable/ic_baseline_photo" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
 
     <ImageView
         android:id="@+id/add_note"
         android:layout_width="@dimen/_48sdp"
         android:layout_height="@dimen/_48sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
         android:background="@drawable/background_add"
-        android:padding="@dimen/_12sdp"
         android:contentDescription="@string/add_note"
+        android:padding="@dimen/_12sdp"
         android:src="@drawable/ic_quill"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintBottom_toTopOf="@id/linearLayout2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintVertical_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/linearLayout2" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

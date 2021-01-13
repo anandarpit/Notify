@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/backup"
-        app:showAsAction="never"
-        android:title="Backup" />
-    <item
-        android:id="@+id/importnotes"
-        app:showAsAction="never"
-        android:title="Import" />
+<!--    <item-->
+<!--        android:id="@+id/backup"-->
+<!--        app:showAsAction="never"-->
+<!--        android:title="Backup" />-->
+<!--    <item-->
+<!--        android:id="@+id/importnotes"-->
+<!--        app:showAsAction="never"-->
+<!--        android:title="Import" />-->
     <item
         android:id="@+id/archives"
         app:showAsAction="never"
